@@ -8,7 +8,7 @@
                         <img src="{{ route('photos.show', [$room, $photo]) }}" alt="Foto von {{ $station->name }}" loading="lazy" class="h-40 w-auto max-w-[16rem] rounded-xl object-cover" @if ($photo->width && $photo->height) width="{{ $photo->width }}" height="{{ $photo->height }}" style="aspect-ratio: {{ $photo->width }} / {{ $photo->height }}" @endif>
                     </a>
                     @if ($isOwner || ($participant && $photo->participant_id === $participant->id))
-                        <form method="POST" action="{{ route('photos.destroy', [$room, $photo]) }}" class="absolute right-1.5 top-1.5" onsubmit="return confirm('Foto löschen?')">
+                        <form data-form-type="other" method="POST" action="{{ route('photos.destroy', [$room, $photo]) }}" class="absolute right-1.5 top-1.5" onsubmit="return confirm('Foto löschen?')">
                             @csrf @method('DELETE')
                             <button class="grid size-8 place-items-center rounded-full bg-black/60 text-white" aria-label="Foto löschen">
                                 <svg viewBox="0 0 20 20" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>

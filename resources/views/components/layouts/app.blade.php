@@ -25,7 +25,7 @@
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('admin.rooms') }}" class="rounded-full px-3 py-2 hover:bg-raised">Admin</a>
                 @endif
-                <form method="POST" action="{{ route('logout') }}">
+                <form data-form-type="other" method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="rounded-full px-3 py-2 text-muted hover:bg-raised">Abmelden</button>
                 </form>

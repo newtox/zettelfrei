@@ -43,12 +43,12 @@
                                 <p class="text-sm text-muted"><span x-text="data ? data.voters : {{ $room->voterCount() }}">{{ $room->voterCount() }}</span> von <span x-text="data ? data.participants : {{ $room->participants->count() }}">{{ $room->participants->count() }}</span> haben abgestimmt</p>
                             </div>
                             @if ($room->voting_open)
-                                <form method="POST" action="{{ route('rooms.close-all', $room) }}">
+                                <form data-form-type="other" method="POST" action="{{ route('rooms.close-all', $room) }}">
                                     @csrf
                                     <button class="btn btn-live btn-sm">Abstimmung schließen</button>
                                 </form>
                             @elseif (! $room->isRevealing())
-                                <form method="POST" action="{{ route('rooms.open-all', $room) }}">
+                                <form data-form-type="other" method="POST" action="{{ route('rooms.open-all', $room) }}">
                                     @csrf
                                     <button class="btn btn-primary btn-sm">Abstimmung öffnen</button>
                                 </form>
@@ -61,11 +61,11 @@
                             <p class="text-sm text-muted">Alle können gleichzeitig bewertet werden.</p>
                             @unless ($room->isRevealing())
                                 <div class="flex gap-2">
-                                    <form method="POST" action="{{ route('rooms.open-all', $room) }}">
+                                    <form data-form-type="other" method="POST" action="{{ route('rooms.open-all', $room) }}">
                                         @csrf
                                         <button class="btn btn-primary btn-sm">Alle öffnen</button>
                                     </form>
-                                    <form method="POST" action="{{ route('rooms.close-all', $room) }}">
+                                    <form data-form-type="other" method="POST" action="{{ route('rooms.close-all', $room) }}">
                                         @csrf
                                         <button class="btn btn-quiet btn-sm">Alle schließen</button>
                                     </form>
@@ -107,12 +107,12 @@
                                     <div class="flex items-center gap-1">
                                         @if ($choice)
                                         @elseif ($station->isOpen())
-                                            <form method="POST" action="{{ route('rooms.stations.close', [$room, $station]) }}">
+                                            <form data-form-type="other" method="POST" action="{{ route('rooms.stations.close', [$room, $station]) }}">
                                                 @csrf
                                                 <button class="btn btn-live btn-sm">Bewertung schließen</button>
                                             </form>
                                         @elseif (! $room->isRevealing())
-                                            <form method="POST" action="{{ route('rooms.stations.open', [$room, $station]) }}">
+                                            <form data-form-type="other" method="POST" action="{{ route('rooms.stations.open', [$room, $station]) }}">
                                                 @csrf
                                                 <button class="btn btn-sm {{ $station->status === 'pending' ? 'btn-primary' : 'btn-quiet' }}">{{ $station->status === 'pending' ? 'Bewertung öffnen' : 'Wieder öffnen' }}</button>
                                             </form>
@@ -122,22 +122,22 @@
                                                 <svg viewBox="0 0 20 20" class="size-5" fill="currentColor"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>
                                             </summary>
                                             <div class="absolute right-0 z-10 mt-2 w-64 space-y-3 rounded-2xl bg-surface p-4 shadow-2xl ring-1 ring-line">
-                                                <form method="POST" action="{{ route('rooms.stations.update', [$room, $station]) }}" class="flex gap-2">
+                                                <form data-form-type="other" method="POST" action="{{ route('rooms.stations.update', [$room, $station]) }}" class="flex gap-2">
                                                     @csrf @method('PATCH')
                                                     <input name="name" value="{{ $station->name }}" maxlength="60" class="field min-h-10 text-base" aria-label="Neuer Name">
                                                     <button class="btn btn-quiet btn-sm">Umbenennen</button>
                                                 </form>
                                                 <div class="flex gap-2">
-                                                    <form method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'up']) }}" class="flex-1">
+                                                    <form data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'up']) }}" class="flex-1">
                                                         @csrf
                                                         <button class="btn btn-quiet btn-sm w-full" @disabled($loop->first)>Nach oben</button>
                                                     </form>
-                                                    <form method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'down']) }}" class="flex-1">
+                                                    <form data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'down']) }}" class="flex-1">
                                                         @csrf
                                                         <button class="btn btn-quiet btn-sm w-full" @disabled($loop->last)>Nach unten</button>
                                                     </form>
                                                 </div>
-                                                <form method="POST" action="{{ route('rooms.stations.destroy', [$room, $station]) }}" onsubmit="return confirm({{ \Illuminate\Support\Js::from(($station->name).' samt Stimmen und Fotos löschen?') }})">
+                                                <form data-form-type="other" method="POST" action="{{ route('rooms.stations.destroy', [$room, $station]) }}" onsubmit="return confirm({{ \Illuminate\Support\Js::from(($station->name).' samt Stimmen und Fotos löschen?') }})">
                                                     @csrf @method('DELETE')
                                                     <button class="text-sm font-semibold text-live">{{ $room->item_label }} löschen</button>
                                                 </form>
@@ -149,7 +149,7 @@
                         @endforeach
                     </ol>
 
-                    <form method="POST" action="{{ route('rooms.stations.store', $room) }}" class="mt-4 flex gap-2">
+                    <form data-form-type="other" method="POST" action="{{ route('rooms.stations.store', $room) }}" class="mt-4 flex gap-2">
                         @csrf
                         <input name="name" placeholder="{{ $room->item_label }} hinzufügen" maxlength="60" class="field" required>
                         <button class="btn btn-quiet shrink-0">Hinzufügen</button>
@@ -161,12 +161,12 @@
                     @if (! $room->isRevealing())
                         <p class="mt-1 text-muted">Bis hierhin sieht niemand ein Ergebnis, auch du nicht. Beim Aufdecken wird die Abstimmung geschlossen und alle Handys springen zum Ergebnis.</p>
                         <div class="mt-4 flex flex-wrap gap-2">
-                            <form method="POST" action="{{ route('rooms.reveal', $room) }}">
+                            <form data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}">
                                 @csrf
                                 <input type="hidden" name="action" value="next">
                                 <button class="btn btn-primary">Platz für Platz aufdecken</button>
                             </form>
-                            <form method="POST" action="{{ route('rooms.reveal', $room) }}">
+                            <form data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}">
                                 @csrf
                                 <input type="hidden" name="action" value="all">
                                 <button class="btn btn-quiet">Alles auf einmal</button>
@@ -176,7 +176,7 @@
                         <p class="mt-1 text-muted">{{ min($room->reveal_step, $stationCount) }} von {{ $stationCount }} Plätzen aufgedeckt.</p>
                         <div class="mt-4 flex flex-wrap gap-2">
                             <a href="{{ route('play.results', $room) }}" class="btn btn-primary">Zum Ergebnis</a>
-                            <form method="POST" action="{{ route('rooms.reveal', $room) }}" onsubmit="return confirm('Ergebnis für alle wieder verbergen?')">
+                            <form data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}" onsubmit="return confirm('Ergebnis für alle wieder verbergen?')">
                                 @csrf
                                 <input type="hidden" name="action" value="hide">
                                 <button class="btn btn-quiet">Wieder verbergen</button>
@@ -198,7 +198,7 @@
                         <button type="button" @click="copy()" class="btn btn-quiet btn-sm" x-text="copied ? 'Kopiert' : 'Link kopieren'">Link kopieren</button>
                         <button type="button" @click="share()" class="btn btn-quiet btn-sm">Teilen</button>
                     </div>
-                    <form method="POST" action="{{ route('rooms.update', $room) }}" class="mt-4">
+                    <form data-form-type="other" method="POST" action="{{ route('rooms.update', $room) }}" class="mt-4">
                         @csrf @method('PATCH')
                         <input type="hidden" name="join_locked" value="{{ $room->join_locked ? 0 : 1 }}">
                         <button class="text-sm text-muted underline underline-offset-4 hover:text-ink">{{ $room->join_locked ? 'Beitritt wieder erlauben' : 'Keine neuen Teilnehmer mehr zulassen' }}</button>
@@ -227,7 +227,7 @@
                                             <p class="truncate text-xs text-muted">{{ $p->station?->name ?? 'Gehört zu keinem Eintrag' }}</p>
                                         @endif
                                     </div>
-                                    <form method="POST" action="{{ route('rooms.participants.destroy', [$room, $p->id]) }}" onsubmit="return confirm({{ \Illuminate\Support\Js::from(($p->name).' entfernen? Die Person kann danach neu beitreten.') }})">
+                                    <form data-form-type="other" method="POST" action="{{ route('rooms.participants.destroy', [$room, $p->id]) }}" onsubmit="return confirm({{ \Illuminate\Support\Js::from(($p->name).' entfernen? Die Person kann danach neu beitreten.') }})">
                                         @csrf @method('DELETE')
                                         <button class="rounded-full px-2 py-1 text-xs text-muted hover:bg-raised hover:text-live">Entfernen</button>
                                     </form>
@@ -247,16 +247,16 @@
                         @foreach ($room->criteria as $criterion)
                             <li class="flex items-center gap-1 py-1.5">
                                 <span class="flex-1 truncate">{{ $criterion->name }}</span>
-                                <form method="POST" action="{{ route('rooms.criteria.move', [$room, $criterion->id, 'up']) }}">
+                                <form data-form-type="other" method="POST" action="{{ route('rooms.criteria.move', [$room, $criterion->id, 'up']) }}">
                                     @csrf
                                     <button class="grid size-8 place-items-center rounded-full text-muted hover:bg-raised disabled:opacity-30" @disabled($loop->first) aria-label="Nach oben"><svg viewBox="0 0 20 20" class="size-3.5" fill="currentColor"><path d="M10 5l6 7H4z"/></svg></button>
                                 </form>
-                                <form method="POST" action="{{ route('rooms.criteria.move', [$room, $criterion->id, 'down']) }}">
+                                <form data-form-type="other" method="POST" action="{{ route('rooms.criteria.move', [$room, $criterion->id, 'down']) }}">
                                     @csrf
                                     <button class="grid size-8 place-items-center rounded-full text-muted hover:bg-raised disabled:opacity-30" @disabled($loop->last) aria-label="Nach unten"><svg viewBox="0 0 20 20" class="size-3.5" fill="currentColor"><path d="M10 15l6-7H4z"/></svg></button>
                                 </form>
                                 @if ($room->criteria->count() > 1)
-                                    <form method="POST" action="{{ route('rooms.criteria.destroy', [$room, $criterion->id]) }}" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Kriterium „'.($criterion->name).'“ löschen?') }})">
+                                    <form data-form-type="other" method="POST" action="{{ route('rooms.criteria.destroy', [$room, $criterion->id]) }}" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Kriterium „'.($criterion->name).'“ löschen?') }})">
                                         @csrf @method('DELETE')
                                         <button class="grid size-8 place-items-center rounded-full text-muted hover:bg-raised hover:text-live" aria-label="Löschen"><svg viewBox="0 0 20 20" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
                                     </form>
@@ -264,7 +264,7 @@
                             </li>
                         @endforeach
                     </ul>
-                    <form method="POST" action="{{ route('rooms.criteria.store', $room) }}" class="mt-3 flex gap-2">
+                    <form data-form-type="other" method="POST" action="{{ route('rooms.criteria.store', $room) }}" class="mt-3 flex gap-2">
                         @csrf
                         <input name="name" placeholder="Neues Kriterium" maxlength="60" class="field min-h-10 text-base" required>
                         <button class="btn btn-quiet btn-sm shrink-0">Hinzufügen</button>
@@ -274,7 +274,7 @@
 
                 <section class="panel p-5">
                     <h2 class="text-xl">Ablauf</h2>
-                    <form method="POST" action="{{ route('rooms.settings', $room) }}" class="mt-2">
+                    <form data-form-type="other" method="POST" action="{{ route('rooms.settings', $room) }}" class="mt-2">
                         @csrf @method('PATCH')
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -304,7 +304,7 @@
 
                 <section class="panel p-5">
                     <h2 class="text-xl">Einstellungen</h2>
-                    <form method="POST" action="{{ route('rooms.update', $room) }}" class="mt-3 space-y-4">
+                    <form data-form-type="other" method="POST" action="{{ route('rooms.update', $room) }}" class="mt-3 space-y-4">
                         @csrf @method('PATCH')
                         <div>
                             <label for="room-name" class="mb-1.5 block text-sm font-semibold">Name</label>
@@ -321,7 +321,7 @@
                         <p class="mt-0.5 text-sm text-muted">Damit verwaltet man den Raum von jedem Gerät aus.</p>
                         <div class="mt-2 flex gap-2">
                             <button type="button" @click="copy()" class="btn btn-quiet btn-sm" x-text="copied ? 'Kopiert' : 'Kopieren'">Kopieren</button>
-                            <form method="POST" action="{{ route('rooms.token', $room) }}" onsubmit="return confirm('Neuen Admin-Link erzeugen? Der alte funktioniert dann nicht mehr.')">
+                            <form data-form-type="other" method="POST" action="{{ route('rooms.token', $room) }}" onsubmit="return confirm('Neuen Admin-Link erzeugen? Der alte funktioniert dann nicht mehr.')">
                                 @csrf
                                 <button class="btn btn-quiet btn-sm">Neuen erzeugen</button>
                             </form>
@@ -330,7 +330,7 @@
                     @if ($room->pruneDate())
                         <p class="mt-4 text-sm text-muted">Ohne weitere Aktivität wird der Raum am {{ $room->pruneDate()->translatedFormat('j. F Y') }} automatisch gelöscht.</p>
                     @endif
-                    <form method="POST" action="{{ route('rooms.destroy', $room) }}" class="mt-4 border-t border-line pt-4" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Raum „'.($room->name).'“ mit allen Bewertungen und Fotos endgültig löschen?') }})">
+                    <form data-form-type="other" method="POST" action="{{ route('rooms.destroy', $room) }}" class="mt-4 border-t border-line pt-4" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Raum „'.($room->name).'“ mit allen Bewertungen und Fotos endgültig löschen?') }})">
                         @csrf @method('DELETE')
                         <button class="text-sm font-semibold text-live">Raum löschen</button>
                     </form>

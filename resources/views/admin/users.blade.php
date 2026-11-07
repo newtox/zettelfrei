@@ -22,11 +22,11 @@
                             </div>
                             <span class="shrink-0 text-sm font-semibold text-muted group-open:hidden">Bearbeiten</span>
                         </summary>
-                        <form method="POST" action="{{ route('admin.users.update', $u) }}" class="mt-4 grid gap-3 sm:grid-cols-2">
+                        <form data-form-type="other" method="POST" action="{{ route('admin.users.update', $u) }}" class="mt-4 grid gap-3 sm:grid-cols-2">
                             @csrf @method('PUT')
-                            <input name="name" value="{{ $u->name }}" maxlength="60" class="field min-h-10 text-base" required aria-label="Name">
-                            <input name="email" type="email" value="{{ $u->email }}" class="field min-h-10 text-base" required aria-label="E-Mail">
-                            <input name="password" type="password" autocomplete="new-password" placeholder="Neues Passwort (leer lassen = unverändert)" class="field min-h-10 text-base sm:col-span-2">
+                            <input name="name" value="{{ $u->name }}" maxlength="60" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="Name">
+                            <input name="email" type="email" value="{{ $u->email }}" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="E-Mail">
+                            <input name="password" type="password" autocomplete="new-password" data-form-type="other" placeholder="Neues Passwort (leer lassen = unverändert)" class="field min-h-10 text-base sm:col-span-2">
                             @unless ($u->is(auth()->user()))
                                 <label class="flex items-center gap-2 text-sm sm:col-span-2">
                                     <input type="checkbox" name="is_admin" value="1" @checked($u->is_admin) class="size-4 accent-[var(--glow)]">
@@ -38,7 +38,7 @@
                             </div>
                         </form>
                         @unless ($u->is(auth()->user()))
-                            <form method="POST" action="{{ route('admin.users.destroy', $u) }}" class="mt-3" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Konto von '.$u->name.' löschen?') }})">
+                            <form data-form-type="other" method="POST" action="{{ route('admin.users.destroy', $u) }}" class="mt-3" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Konto von '.$u->name.' löschen?') }})">
                                 @csrf @method('DELETE')
                                 <button class="text-sm font-semibold text-live">Konto löschen</button>
                             </form>
@@ -50,11 +50,11 @@
 
         <section class="panel h-fit p-5">
             <h2 class="text-xl">Neues Konto</h2>
-            <form method="POST" action="{{ route('admin.users.store') }}" class="mt-4 space-y-3">
+            <form data-form-type="other" method="POST" action="{{ route('admin.users.store') }}" class="mt-4 space-y-3">
                 @csrf
-                <input name="name" value="{{ old('name') }}" placeholder="Name" maxlength="60" class="field min-h-10 text-base" required>
-                <input name="email" type="email" value="{{ old('email') }}" placeholder="E-Mail" class="field min-h-10 text-base" required>
-                <input name="password" type="password" autocomplete="new-password" placeholder="Passwort (mind. 8 Zeichen)" class="field min-h-10 text-base" required>
+                <input name="name" value="{{ old('name') }}" placeholder="Name" maxlength="60" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required>
+                <input name="email" type="email" value="{{ old('email') }}" placeholder="E-Mail" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required>
+                <input name="password" type="password" autocomplete="new-password" data-form-type="other" placeholder="Passwort (mind. 8 Zeichen)" class="field min-h-10 text-base" required>
                 <label class="flex items-center gap-2 text-sm">
                     <input type="checkbox" name="is_admin" value="1" class="size-4 accent-[var(--glow)]">
                     Super-Admin

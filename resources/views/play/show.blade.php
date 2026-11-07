@@ -36,7 +36,7 @@
                     <p class="mt-4 text-sm text-muted"><span x-text="data?.station?.votes ?? '…'"></span> von <span x-text="data?.station?.eligible ?? '…'"></span> haben schon abgestimmt.</p>
                 </div>
             @else
-                <form method="POST" action="{{ route('play.vote', [$room, $station]) }}" class="mt-6 space-y-3" x-data="ballot({{ $room->criteria->count() }})" @change="update()">
+                <form data-form-type="other" method="POST" action="{{ route('play.vote', [$room, $station]) }}" class="mt-6 space-y-3" x-data="ballot({{ $room->criteria->count() }})" @change="update()">
                     @csrf
                     <x-errors />
                     @foreach ($room->criteria as $criterion)
@@ -126,7 +126,7 @@
                 @if ($room->photos_enabled)
                     <a href="{{ route('play.gallery', $room) }}" class="font-semibold underline decoration-line underline-offset-4 hover:decoration-glow">Alle Fotos</a>
                 @endif
-                <form method="POST" action="{{ route('play.leave', $room) }}" onsubmit="return confirm('Wirklich austreten? Deine bisherigen Stimmen bleiben anonym erhalten.')">
+                <form data-form-type="other" method="POST" action="{{ route('play.leave', $room) }}" onsubmit="return confirm('Wirklich austreten? Deine bisherigen Stimmen bleiben anonym erhalten.')">
                     @csrf
                     <button class="text-muted underline decoration-line underline-offset-4">Nicht {{ $participant->name }}? Austreten</button>
                 </form>

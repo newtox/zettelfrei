@@ -19,7 +19,7 @@
     <h1 class="text-3xl">Neuer Raum</h1>
     <p class="mt-2 text-muted">Alles außer der Abstimmungsart lässt sich später noch ändern.</p>
 
-    <form method="POST" action="{{ route('rooms.store') }}" class="mt-6 space-y-5"
+    <form data-form-type="other" method="POST" action="{{ route('rooms.store') }}" class="mt-6 space-y-5"
         x-data="{
             ...@js($initial),
             templates: @js($templates),

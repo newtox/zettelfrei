@@ -8,7 +8,7 @@
             <p class="mt-1 text-sm text-muted">Sag der Person, die den Raum erstellt hat, dass sie den Beitritt wieder freigeben soll.</p>
         </div>
     @else
-        <form method="POST" action="{{ route('play.join', $room) }}" class="panel mt-8 space-y-5 p-5">
+        <form data-form-type="other" method="POST" action="{{ route('play.join', $room) }}" class="panel mt-8 space-y-5 p-5">
             @csrf
             <x-errors />
             <div>

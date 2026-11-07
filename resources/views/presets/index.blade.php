@@ -20,7 +20,7 @@
                         </div>
                         <span class="shrink-0 text-sm font-semibold text-muted group-open:hidden">Bearbeiten</span>
                     </summary>
-                    <form method="POST" action="{{ route('presets.update', $preset) }}" class="mt-5 space-y-4">
+                    <form data-form-type="other" method="POST" action="{{ route('presets.update', $preset) }}" class="mt-5 space-y-4">
                         @csrf @method('PUT')
                         <input name="name" value="{{ $preset->name }}" maxlength="60" class="field" required aria-label="Name der Vorlage">
                         <x-list-editor name="criteria" :items="$preset->criteria" placeholder="Kriterium" add-label="Kriterium hinzufügen" />
@@ -28,7 +28,7 @@
                             <button class="btn btn-primary btn-sm">Speichern</button>
                         </div>
                     </form>
-                    <form method="POST" action="{{ route('presets.destroy', $preset) }}" class="mt-3" onsubmit="return confirm('Vorlage löschen?')">
+                    <form data-form-type="other" method="POST" action="{{ route('presets.destroy', $preset) }}" class="mt-3" onsubmit="return confirm('Vorlage löschen?')">
                         @csrf @method('DELETE')
                         <button class="text-sm font-semibold text-live">Vorlage löschen</button>
                     </form>
@@ -39,7 +39,7 @@
 
     <section class="panel mt-8 p-5">
         <h2 class="text-xl">Neue Vorlage</h2>
-        <form method="POST" action="{{ route('presets.store') }}" class="mt-4 space-y-4">
+        <form data-form-type="other" method="POST" action="{{ route('presets.store') }}" class="mt-4 space-y-4">
             @csrf
             <input name="name" placeholder="Name, z. B. Unsere Kriterien" maxlength="60" class="field" required>
             <x-list-editor name="criteria" :items="['']" placeholder="Kriterium" add-label="Kriterium hinzufügen" />
