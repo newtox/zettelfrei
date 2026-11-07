@@ -22,6 +22,7 @@ The interface is in German.
 - **Change your vote** while voting is open
 - **Photos** can be uploaded by anyone in the room. They are resized to 2000 px in the browser and only visible to room members
 - **Reveal** place by place from last to first, or all at once
+- **Link previews** (Open Graph) for Discord, WhatsApp and others, while every page is marked `noindex` via meta tag and `X-Robots-Tag` header so search engines don't list it
 - **Live status** via polling
 - **Themes** Christmas, dark, light: the site theme is set by the super admin, each room has its own theme, and every device can pick a theme that applies everywhere
 

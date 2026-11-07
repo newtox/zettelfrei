@@ -714,4 +714,20 @@ class ZettelfreiTest extends TestCase
         $room = $this->makeRoom(null, ['theme' => 'dark']);
         $this->anonymous()->get(route('play.show', $room))->assertSee('data-theme="dark"', false);
     }
+
+    public function test_pages_have_preview_metadata_and_are_not_indexed(): void
+    {
+        $this->get(route('home'))
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive')
+            ->assertSee('<meta name="robots" content="noindex, nofollow, noarchive">', false)
+            ->assertSee('property="og:image"', false)
+            ->assertSee('og-image.png', false);
+
+        $room = $this->makeRoom();
+
+        $this->anonymous()->get(route('play.show', $room))
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive')
+            ->assertSee('<meta property="og:title" content="'.e($room->name.' – Zettelfrei').'">', false)
+            ->assertSee('Du wurdest zu „'.$room->name.'“ eingeladen.', false);
+    }
 }

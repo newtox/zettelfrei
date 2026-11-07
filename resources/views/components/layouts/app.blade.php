@@ -1,14 +1,37 @@
-@props(['title' => null, 'theme' => null, 'room' => null, 'wide' => false])
+@props(['title' => null, 'theme' => null, 'room' => null, 'wide' => false, 'description' => null])
 <!DOCTYPE html>
-@php($baseTheme = $theme ?? \App\Models\Setting::siteTheme())
+@php
+    $baseTheme = $theme ?? \App\Models\Setting::siteTheme();
+    $pageTitle = ($title ? $title.' – ' : '').config('app.name');
+    $description ??= $room
+        ? 'Du wurdest zu „'.$room->name.'“ eingeladen. Stimm anonym auf dem Handy mit ab, ganz ohne Konto.'
+        : 'Anonyme Abstimmungen für Familie und Freunde: Raum erstellen, QR-Code zeigen, auf dem Handy abstimmen und gemeinsam auflösen.';
+@endphp
 <html lang="de" data-theme="{{ $baseTheme }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#12241c">
-    <title>{{ $title ? $title.' – ' : '' }}{{ config('app.name') }}</title>
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $description }}">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset('og-image.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ config('app.name') }}: Jeder stimmt ab. Keiner sieht, wie.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $description }}">
+    <meta name="twitter:image" content="{{ asset('og-image.png') }}">
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <script>try{var t=localStorage.getItem('zf-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
