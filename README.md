@@ -16,14 +16,14 @@ The interface is in German.
 - **No account needed to create a room:** the creator is recognised as room admin via cookie and gets a secret admin link for other devices. The link can be regenerated at any time, which invalidates the old one
 - **No account needed to join** via link, QR code or 6-character code, just a name
 - **Optional accounts:** login only, no public registration. Accounts get personal criteria presets and "Meine Räume" across devices
-- **Super admin area** at `/admin`: all rooms with creator, last activity and deletion date; open, delete or keep any room; create, edit and delete accounts
+- **Super admin area** at `/admin`: all rooms with creator, last activity and deletion date; open, delete or keep any room; create, edit and delete accounts; site theme
 - **Automatic cleanup:** rooms without activity are deleted together with their photos after `ROOM_RETENTION_DAYS` days (default 90), unless marked as kept
 - **Anonymous ballots:** a ballot only stores an HMAC of the secret device token and the entry or room, never the participant ID. Votes cannot be traced back to a person, not even in the database
 - **Change your vote** while voting is open
 - **Photos** can be uploaded by anyone in the room. They are resized to 2000 px in the browser and only visible to room members
 - **Reveal** place by place from last to first, or all at once
 - **Live status** via polling
-- **Themes** Christmas, dark, light: set per room for everyone, switchable per device
+- **Themes** Christmas, dark, light: the site theme is set by the super admin, each room has its own theme, and every device can pick a theme that applies everywhere
 
 ## Stack
 
@@ -86,7 +86,7 @@ docker exec -it -u www-data zettelfrei php artisan user:create someone@example.c
 | --- | --- | --- |
 | `APP_KEY` | – | Required. Also used for the anonymous ballot hashes and the encrypted admin links, so never change it once rooms exist |
 | `APP_URL` | – | Public URL, used for links and QR codes |
-| `DEFAULT_THEME` | `christmas` | Theme for the start page and login |
+| `DEFAULT_THEME` | `christmas` | Site theme until one is set in the admin area |
 | `ROOM_RETENTION_DAYS` | `90` | Days without activity until a room is deleted, `0` disables the cleanup |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | – | Creates a super admin on start if the account does not exist yet |
 | `POLL_INTERVAL_MS` | `4000` | How often phones poll for status updates |

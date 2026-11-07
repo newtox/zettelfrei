@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AdminController::class, 'rooms'])->name('rooms');
         Route::post('/raeume/{room}/behalten', [AdminController::class, 'keepRoom'])->name('rooms.keep');
         Route::delete('/raeume/{room}', [AdminController::class, 'destroyRoom'])->name('rooms.destroy');
+        Route::get('/einstellungen', [AdminController::class, 'settings'])->name('settings');
+        Route::put('/einstellungen', [AdminController::class, 'updateSettings'])->name('settings.update');
         Route::get('/konten', [AdminController::class, 'users'])->name('users');
         Route::post('/konten', [AdminController::class, 'storeUser'])->name('users.store');
         Route::put('/konten/{user}', [AdminController::class, 'updateUser'])->name('users.update');

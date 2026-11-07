@@ -1,6 +1,7 @@
 @props(['title' => null, 'theme' => null, 'room' => null, 'wide' => false])
 <!DOCTYPE html>
-<html lang="de" data-theme="{{ $theme ?? config('zettelfrei.default_theme') }}">
+@php($baseTheme = $theme ?? \App\Models\Setting::siteTheme())
+<html lang="de" data-theme="{{ $baseTheme }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -8,9 +9,7 @@
     <meta name="theme-color" content="#12241c">
     <title>{{ $title ? $title.' – ' : '' }}{{ config('app.name') }}</title>
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
-    @if ($room)
-        <script>try{var t=localStorage.getItem('br-theme-{{ $room->code }}');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    @endif
+    <script>try{var t=localStorage.getItem('zf-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-dvh antialiased">
@@ -67,13 +66,12 @@
         </form>
     </dialog>
 
-    @if ($room)
-        <footer class="mx-auto flex flex-wrap items-center gap-x-3 gap-y-2 px-5 pb-8 text-sm text-muted {{ $wide ? 'max-w-6xl' : 'max-w-xl' }}" x-data="themePicker('{{ $room->code }}', '{{ $room->theme }}')">
-            <span class="w-full sm:w-auto">Ansicht auf diesem Gerät:</span>
-            @foreach (\App\Models\Room::THEMES as $key => $label)
-                <button type="button" @click="set('{{ $key }}')" class="-ml-1 rounded-full px-3 py-1 sm:ml-0" :class="current === '{{ $key }}' ? 'bg-raised text-ink' : 'hover:text-ink'">{{ $label }}</button>
-            @endforeach
-        </footer>
-    @endif
+    <footer class="mx-auto flex flex-wrap items-center gap-x-3 gap-y-2 px-5 pb-8 text-sm text-muted {{ $wide ? 'max-w-6xl' : 'max-w-xl' }}" x-data="themePicker('{{ $baseTheme }}')">
+        <span class="w-full sm:w-auto">Ansicht auf diesem Gerät:</span>
+        <button type="button" @click="set(null)" class="-ml-1 rounded-full px-3 py-1 sm:ml-0" :class="current === null ? 'bg-raised text-ink' : 'hover:text-ink'">Standard</button>
+        @foreach (\App\Models\Room::THEMES as $key => $label)
+            <button type="button" @click="set('{{ $key }}')" class="-ml-1 rounded-full px-3 py-1 sm:ml-0" :class="current === '{{ $key }}' ? 'bg-raised text-ink' : 'hover:text-ink'">{{ $label }}</button>
+        @endforeach
+    </footer>
 </body>
 </html>

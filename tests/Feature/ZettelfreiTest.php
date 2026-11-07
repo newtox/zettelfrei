@@ -695,4 +695,23 @@ class ZettelfreiTest extends TestCase
         $this->assertSame(1, substr_count($html, '<li>„Test“ steht mehrfach in der Liste.</li>'));
         $this->assertSame(1, substr_count($html, '<li>Das Kriterium „Test“ steht mehrfach in der Liste.</li>'));
     }
+
+    public function test_super_admin_sets_site_theme(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $normal = User::factory()->create();
+
+        $this->get(route('home'))->assertSee('data-theme="christmas"', false);
+
+        $this->actingAs($normal)->put(route('admin.settings.update'), ['site_theme' => 'light'])->assertForbidden();
+        $this->actingAs($admin)->put(route('admin.settings.update'), ['site_theme' => 'nope'])->assertSessionHasErrors('site_theme');
+        $this->actingAs($admin)->put(route('admin.settings.update'), ['site_theme' => 'light'])->assertSessionHasNoErrors();
+
+        $this->anonymous();
+        auth()->logout();
+        $this->get(route('home'))->assertSee('data-theme="light"', false);
+
+        $room = $this->makeRoom(null, ['theme' => 'dark']);
+        $this->anonymous()->get(route('play.show', $room))->assertSee('data-theme="dark"', false);
+    }
 }

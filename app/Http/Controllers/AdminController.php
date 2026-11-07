@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,22 @@ class AdminController extends Controller
         $room->delete();
 
         return back()->with('status', '„'.$room->name.'“ wurde gelöscht.');
+    }
+
+    public function settings(): View
+    {
+        return view('admin.settings', ['siteTheme' => Setting::siteTheme()]);
+    }
+
+    public function updateSettings(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'site_theme' => ['required', Rule::in(array_keys(Room::THEMES))],
+        ]);
+
+        Setting::put('site_theme', $data['site_theme']);
+
+        return back()->with('status', 'Einstellungen gespeichert.');
     }
 
     public function users(): View

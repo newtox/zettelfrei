@@ -162,20 +162,19 @@ Alpine.data('qr', (text) => ({
     },
 }));
 
-Alpine.data('themePicker', (roomCode, roomTheme) => ({
-    key: 'br-theme-' + roomCode,
-    current: roomTheme,
+Alpine.data('themePicker', (baseTheme) => ({
+    current: null,
     init() {
         try {
-            this.current = localStorage.getItem(this.key) || roomTheme;
+            this.current = localStorage.getItem('zf-theme');
         } catch (e) {}
     },
     set(theme) {
         this.current = theme;
-        document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.theme = theme || baseTheme;
         try {
-            if (theme === roomTheme) localStorage.removeItem(this.key);
-            else localStorage.setItem(this.key, theme);
+            if (theme) localStorage.setItem('zf-theme', theme);
+            else localStorage.removeItem('zf-theme');
         } catch (e) {}
     },
 }));
