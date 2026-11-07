@@ -276,13 +276,14 @@
                     <h2 class="text-xl">Ablauf</h2>
                     <form data-form-type="other" method="POST" action="{{ route('rooms.settings', $room) }}" class="mt-2">
                         @csrf @method('PATCH')
+                        <p class="mb-1.5 text-sm font-semibold">Bezeichnung der Einträge</p>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label for="item_label" class="mb-1 block text-sm font-semibold">Einzahl</label>
+                                <label for="item_label" class="mb-1 block text-sm text-muted">Einzahl</label>
                                 <input id="item_label" name="item_label" value="{{ $room->item_label }}" maxlength="30" class="field min-h-10 text-base" required>
                             </div>
                             <div>
-                                <label for="items_label" class="mb-1 block text-sm font-semibold">Mehrzahl</label>
+                                <label for="items_label" class="mb-1 block text-sm text-muted">Mehrzahl</label>
                                 <input id="items_label" name="items_label" value="{{ $room->items_label }}" maxlength="30" class="field min-h-10 text-base" required>
                             </div>
                         </div>

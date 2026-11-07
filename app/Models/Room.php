@@ -32,6 +32,7 @@ class Room extends Model
         'trees' => [
             'label' => 'Weihnachtsbäume',
             'hint' => 'Rundgang von Familie zu Familie, Punkte pro Kriterium',
+            'items_hint' => 'Die Familien, deren Baum ihr bewertet.',
             'name' => 'Baumbewertung',
             'mode' => self::SCORE,
             'item_label' => 'Familie',
@@ -46,6 +47,7 @@ class Room extends Model
         'contest' => [
             'label' => 'Wettbewerb',
             'hint' => 'Alle Beiträge gleichzeitig bewerten, z. B. Plätzchen oder Kostüme',
+            'items_hint' => 'Die Beiträge, die bewertet werden, z. B. jede Plätzchensorte oder jedes Kostüm.',
             'name' => 'Wettbewerb',
             'mode' => self::SCORE,
             'item_label' => 'Beitrag',
@@ -60,6 +62,7 @@ class Room extends Model
         'poll' => [
             'label' => 'Umfrage',
             'hint' => 'Jeder wählt eine Option, z. B. wohin es zum Essen geht',
+            'items_hint' => 'Die Antworten, aus denen jeder auswählt.',
             'name' => 'Wohin gehen wir?',
             'mode' => self::CHOICE,
             'item_label' => 'Option',

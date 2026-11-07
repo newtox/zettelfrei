@@ -82,14 +82,16 @@
         </section>
 
         <section class="panel p-5">
-            <h2 class="text-xl">Was wird bewertet?</h2>
-            <div class="mt-3 grid grid-cols-2 gap-2">
+            <h2 class="text-xl">Einträge</h2>
+            <p class="mt-1 text-sm text-muted" x-text="templates[template]?.items_hint ?? 'Worüber abgestimmt wird.'">{{ $templates[$initial['template']]['items_hint'] ?? 'Worüber abgestimmt wird.' }}</p>
+            <p class="mt-4 text-sm font-semibold">Wie heißen sie?</p>
+            <div class="mt-1.5 grid grid-cols-2 gap-2">
                 <div>
-                    <label for="item_label" class="mb-1 block text-sm font-semibold">Einzahl</label>
+                    <label for="item_label" class="mb-1 block text-sm text-muted">Einzahl</label>
                     <input id="item_label" name="item_label" x-model="item_label" maxlength="30" class="field" required>
                 </div>
                 <div>
-                    <label for="items_label" class="mb-1 block text-sm font-semibold">Mehrzahl</label>
+                    <label for="items_label" class="mb-1 block text-sm text-muted">Mehrzahl</label>
                     <input id="items_label" name="items_label" x-model="items_label" maxlength="30" class="field" required>
                 </div>
             </div>
