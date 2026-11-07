@@ -13,6 +13,7 @@
         'one_at_a_time' => (bool) old('one_at_a_time', $errors->any() ? false : $defaults['one_at_a_time']),
         'max_choices' => (int) old('max_choices', $defaults['max_choices']),
         'save_preset' => (bool) old('save_preset'),
+        'activePreset' => old('criteria') ? null : $defaults['preset'],
     ];
 @endphp
 <x-layouts.app title="Neuer Raum">
@@ -31,7 +32,10 @@
                 this.name = t.name + (t.mode === 'score' ? ' ' + this.year : '');
                 ['theme', 'mode', 'item_label', 'items_label', 'exclude_own', 'photos_enabled', 'one_at_a_time', 'max_choices'].forEach(k => this[k] = t[k]);
                 const preset = this.presets.find(p => p.name === t.preset);
-                if (preset) this.$dispatch('set-criteria', preset.criteria);
+                if (preset) {
+                    this.activePreset = preset.name;
+                    this.$dispatch('set-criteria', preset.criteria);
+                }
             },
         }">
         <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
@@ -105,7 +109,7 @@
             <p class="mt-1 text-sm text-muted">Jedes Kriterium bekommt 1 bis 10 Punkte. Starte mit einer Vorlage und pass sie an.</p>
             <div class="mt-4 flex flex-wrap gap-2">
                 <template x-for="p in presets" :key="p.id">
-                    <button type="button" class="btn btn-quiet btn-sm" @click="$dispatch('set-criteria', p.criteria)">
+                    <button type="button" class="btn btn-sm" :class="activePreset === p.name ? 'btn-primary' : 'btn-quiet'" @click="activePreset = p.name; $dispatch('set-criteria', p.criteria)">
                         <span x-text="p.name"></span>
                         <span x-show="p.mine" class="text-xs text-muted">eigene</span>
                     </button>

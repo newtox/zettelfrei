@@ -42,7 +42,7 @@ class Room extends Model
             'one_at_a_time' => true,
             'max_choices' => 1,
             'theme' => 'christmas',
-            'preset' => 'Klassisch',
+            'preset' => 'Weihnachtsbaum',
         ],
         'contest' => [
             'label' => 'Wettbewerb',
@@ -57,7 +57,7 @@ class Room extends Model
             'one_at_a_time' => false,
             'max_choices' => 1,
             'theme' => 'dark',
-            'preset' => 'Schnell',
+            'preset' => 'Allgemein',
         ],
         'poll' => [
             'label' => 'Umfrage',

@@ -298,7 +298,7 @@ class ZettelfreiTest extends TestCase
 
     public function test_guest_can_create_and_manage_room_without_account(): void
     {
-        $this->get(route('rooms.create'))->assertOk()->assertSee('Klassisch')->assertDontSee('als eigene Vorlage speichern');
+        $this->get(route('rooms.create'))->assertOk()->assertSee('Weihnachtsbaum')->assertSee('Kostüm')->assertDontSee('als eigene Vorlage speichern');
 
         [$room, $token] = $this->guestRoom();
 
@@ -486,7 +486,7 @@ class ZettelfreiTest extends TestCase
         $preset = $user->presets()->first();
         $this->assertSame(['Lametta', 'Kugeln'], $preset->criteria);
 
-        $this->actingAs($user)->get(route('rooms.create'))->assertSee('Unsere Liste')->assertSee('Klassisch');
+        $this->actingAs($user)->get(route('rooms.create'))->assertSee('Unsere Liste')->assertSee('Nur Gesamteindruck');
         $this->actingAs($other)->get(route('rooms.create'))->assertDontSee('Unsere Liste');
         $this->actingAs($other)->delete(route('presets.destroy', $preset))->assertForbidden();
     }

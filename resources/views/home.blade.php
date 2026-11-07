@@ -1,7 +1,7 @@
 <x-layouts.app>
     <section class="pt-6">
         <h1 class="text-[2.6rem] leading-[1.05] sm:text-5xl">Jeder stimmt ab. Keiner sieht, wie.</h1>
-        <p class="mt-4 max-w-md text-lg text-muted">Für die Weihnachtsbäume der Verwandtschaft, den Plätzchen-Wettbewerb oder die Frage, wohin es zum Essen geht. Ganz ohne Zettel und Stift.</p>
+        <p class="mt-4 max-w-md text-lg text-muted">Ob Wettbewerb, Bewertung oder Umfrage: Raum erstellen, Code teilen, alle stimmen auf dem Handy ab. Ganz ohne Zettel und Stift.</p>
     </section>
 
     <form novalidate data-form-type="other" method="POST" action="{{ route('join.find') }}" class="panel mt-8 p-5">

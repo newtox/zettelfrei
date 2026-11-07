@@ -29,6 +29,6 @@ class Preset extends Model
     {
         $query->where(fn (Builder $q) => $q->whereNull('user_id')->when($user, fn ($q) => $q->orWhere('user_id', $user->id)))
             ->orderByRaw('user_id is not null')
-            ->orderBy('name');
+            ->orderBy('id');
     }
 }

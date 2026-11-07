@@ -12,7 +12,7 @@ The interface is in German.
 - **Templates when creating a room:** Christmas trees (one entry after another), contest (all entries at once), poll (choice). Each one presets labels, settings, theme and criteria
 - **Custom labels per room**, e.g. family/families, entry/entries, option/options
 - **Room settings:** exclude your own entry, allow photos, one entry at a time or all at once, number of choices
-- **Criteria presets** (Klassisch, Schnell, Ausführlich) plus personal presets per account
+- **Criteria presets by topic** (Christmas tree, food & baking, costumes, decorations, general, overall impression only) plus personal presets per account
 - **No account needed to create a room:** the creator is recognised as room admin via cookie and gets a secret admin link for other devices. The link can be regenerated at any time, which invalidates the old one
 - **No account needed to join** via link, QR code or 6-character code, just a name
 - **Optional accounts:** login only, no public registration. Accounts get personal criteria presets and "Meine Räume" across devices
