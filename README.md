@@ -10,6 +10,7 @@ The interface is in German.
   - *Scores:* 1–10 points per criterion for every entry
   - *Choice:* everyone picks one favourite or up to N
 - **Templates when creating a room:** Christmas trees (one entry after another), contest (all entries at once), poll (choice). Each one presets labels, settings, theme and criteria
+- **Rating style per room:** string of lights, number buttons, slider or stars with half steps, always stored as 1–10 points
 - **Custom labels per room**, e.g. family/families, entry/entries, option/options
 - **Room settings:** exclude your own entry, allow photos, one entry at a time or all at once, number of choices
 - **Criteria presets by topic** (Christmas tree, food & baking, costumes, decorations, general, overall impression only) plus personal presets per account

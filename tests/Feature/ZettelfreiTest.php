@@ -730,4 +730,29 @@ class ZettelfreiTest extends TestCase
             ->assertSee('<meta property="og:title" content="'.e($room->name.' – Zettelfrei').'">', false)
             ->assertSee('Du wurdest zu „'.$room->name.'“ eingeladen.', false);
     }
+
+    public function test_rating_style_is_chosen_per_room(): void
+    {
+        $room = $this->makeRoom(null, ['rating_style' => 'slider']);
+        $this->assertSame('slider', $room->fresh()->rating_style);
+
+        [$first] = $room->stations;
+        $token = $this->join($room, 'Regler');
+        $this->open($room, $first);
+
+        $this->as($room, $token)->get(route('play.show', $room))->assertSee('rating-slider', false)->assertDontSee('class="lights', false);
+
+        $this->actingAs($room->owner)->patch(route('rooms.settings', $room), [
+            'item_label' => 'Familie', 'items_label' => 'Familien', 'one_at_a_time' => '1', 'rating_style' => 'stars',
+        ])->assertSessionHasNoErrors();
+        $this->assertSame('stars', $room->fresh()->rating_style);
+
+        $this->actingAs($room->owner)->patch(route('rooms.settings', $room), [
+            'item_label' => 'Familie', 'items_label' => 'Familien', 'rating_style' => 'dice',
+        ])->assertSessionHasErrors('rating_style');
+        auth()->logout();
+
+        $this->as($room, $token)->post(route('play.vote', [$room, $first]), $this->scores($room, [3, 9]))->assertSessionHasNoErrors();
+        $this->assertEqualsCanonicalizing([3, 9], Ballot::first()->ratings->pluck('score')->all());
+    }
 }

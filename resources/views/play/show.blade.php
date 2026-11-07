@@ -36,26 +36,11 @@
                     <p class="mt-4 text-sm text-muted"><span x-text="data?.station?.votes ?? '…'"></span> von <span x-text="data?.station?.eligible ?? '…'"></span> haben schon abgestimmt.</p>
                 </div>
             @else
-                <form novalidate data-form-type="other" method="POST" action="{{ route('play.vote', [$room, $station]) }}" class="mt-6 space-y-3" x-data="ballot({{ $room->criteria->count() }})" @change="update()">
+                <form novalidate data-form-type="other" method="POST" action="{{ route('play.vote', [$room, $station]) }}" class="mt-6 space-y-3" x-data="ballot({{ $room->criteria->count() }})" @rated="update()">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                     <x-errors />
                     @foreach ($room->criteria as $criterion)
-                        @php $current = old('scores.'.$criterion->id, $scores[$criterion->id] ?? 0); @endphp
-                        <fieldset class="panel px-4 pb-4 pt-3.5" x-data="lights({{ (int) $current }})">
-                            <div class="flex items-baseline justify-between gap-3">
-                                <legend class="text-lg font-semibold">{{ $criterion->name }}</legend>
-                                <span class="font-display text-3xl tabular-nums" :class="value ? 'text-glow' : 'text-muted'" x-text="value || '–'">{{ $current ?: '–' }}</span>
-                            </div>
-                            <div class="lights mt-1" @mouseleave="preview = 0">
-                                @for ($n = 1; $n <= 10; $n++)
-                                    <label class="bulb" :class="{ 'is-lit': shown >= {{ $n }}, 'is-picked': value === {{ $n }} }" @mouseenter="preview = {{ $n }}">
-                                        <input data-form-type="other" type="radio" name="scores[{{ $criterion->id }}]" value="{{ $n }}" @checked((int) $current === $n) @change="pick({{ $n }})" aria-label="{{ $n }} {{ $n === 1 ? 'Punkt' : 'Punkte' }} für {{ $criterion->name }}">
-                                        <span class="cap"></span>
-                                        <span class="glass">{{ $n }}</span>
-                                    </label>
-                                @endfor
-                            </div>
-                        </fieldset>
+                        <x-rating :style="$room->rating_style" :criterion="$criterion" :current="(int) old('scores.'.$criterion->id, $scores[$criterion->id] ?? 0)" />
                     @endforeach
 
                     <div class="sticky bottom-3 pt-2">

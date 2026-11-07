@@ -293,6 +293,10 @@
                                 </div>
                             @else
                                 <x-toggle name="one_at_a_time" :checked="$room->one_at_a_time" label="Einer nach dem anderen" />
+                                <div class="py-3">
+                                    <p class="mb-2 font-semibold">Darstellung der Punkte</p>
+                                    <x-rating-style-options :selected="$room->rating_style" compact />
+                                </div>
                             @endif
                         </div>
                         <button class="btn btn-quiet btn-sm mt-2">Speichern</button>

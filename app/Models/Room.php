@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 #[Hidden(['admin_token'])]
-#[Fillable(['name', 'theme', 'join_locked', 'keep', 'mode', 'item_label', 'items_label', 'exclude_own', 'photos_enabled', 'one_at_a_time', 'voting_open', 'max_choices'])]
+#[Fillable(['name', 'theme', 'join_locked', 'keep', 'mode', 'rating_style', 'item_label', 'items_label', 'exclude_own', 'photos_enabled', 'one_at_a_time', 'voting_open', 'max_choices'])]
 class Room extends Model
 {
     use Prunable;
@@ -28,6 +28,13 @@ class Room extends Model
         self::CHOICE => 'Auswählen',
     ];
 
+    public const RATING_STYLES = [
+        'lights' => ['label' => 'Lichterkette', 'hint' => 'Birnen leuchten bis zur gewählten Zahl auf'],
+        'numbers' => ['label' => 'Zahlen', 'hint' => 'Schlichte Knöpfe von 1 bis 10'],
+        'slider' => ['label' => 'Schieberegler', 'hint' => 'Ein Regler mit großer Zahlenanzeige'],
+        'stars' => ['label' => 'Sterne', 'hint' => '5 Sterne mit halben Schritten'],
+    ];
+
     public const TEMPLATES = [
         'trees' => [
             'label' => 'Weihnachtsbäume',
@@ -37,6 +44,7 @@ class Room extends Model
             'mode' => self::SCORE,
             'item_label' => 'Familie',
             'items_label' => 'Familien',
+            'rating_style' => 'lights',
             'exclude_own' => true,
             'photos_enabled' => true,
             'one_at_a_time' => true,
@@ -52,6 +60,7 @@ class Room extends Model
             'mode' => self::SCORE,
             'item_label' => 'Beitrag',
             'items_label' => 'Beiträge',
+            'rating_style' => 'stars',
             'exclude_own' => true,
             'photos_enabled' => true,
             'one_at_a_time' => false,
@@ -67,6 +76,7 @@ class Room extends Model
             'mode' => self::CHOICE,
             'item_label' => 'Option',
             'items_label' => 'Optionen',
+            'rating_style' => 'lights',
             'exclude_own' => false,
             'photos_enabled' => false,
             'one_at_a_time' => false,

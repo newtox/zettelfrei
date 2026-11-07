@@ -361,6 +361,7 @@ class RoomController extends Controller
             'photos_enabled' => ['nullable', 'boolean'],
             'one_at_a_time' => ['nullable', 'boolean'],
             'max_choices' => ['nullable', 'integer', 'between:1,10'],
+            'rating_style' => ['nullable', Rule::in(array_keys(Room::RATING_STYLES))],
         ];
     }
 
@@ -373,7 +374,7 @@ class RoomController extends Controller
             'photos_enabled' => $request->boolean('photos_enabled'),
             'one_at_a_time' => $request->boolean('one_at_a_time'),
             'max_choices' => (int) ($data['max_choices'] ?? 1),
-        ];
+        ] + (isset($data['rating_style']) ? ['rating_style' => $data['rating_style']] : []);
     }
 
     private function messages(): array

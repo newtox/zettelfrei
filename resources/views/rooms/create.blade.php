@@ -12,6 +12,7 @@
         'photos_enabled' => (bool) old('photos_enabled', $errors->any() ? false : $defaults['photos_enabled']),
         'one_at_a_time' => (bool) old('one_at_a_time', $errors->any() ? false : $defaults['one_at_a_time']),
         'max_choices' => (int) old('max_choices', $defaults['max_choices']),
+        'rating_style' => old('rating_style', $defaults['rating_style']),
         'save_preset' => (bool) old('save_preset'),
         'activePreset' => old('criteria') ? null : $defaults['preset'],
     ];
@@ -30,7 +31,7 @@
                 const t = this.templates[key];
                 this.template = key;
                 this.name = t.name + (t.mode === 'score' ? ' ' + this.year : '');
-                ['theme', 'mode', 'item_label', 'items_label', 'exclude_own', 'photos_enabled', 'one_at_a_time', 'max_choices'].forEach(k => this[k] = t[k]);
+                ['theme', 'mode', 'item_label', 'items_label', 'exclude_own', 'photos_enabled', 'one_at_a_time', 'max_choices', 'rating_style'].forEach(k => this[k] = t[k]);
                 const preset = this.presets.find(p => p.name === t.preset);
                 if (preset) {
                     this.activePreset = preset.name;
@@ -102,6 +103,12 @@
             <p class="mt-4 font-semibold" x-text="items_label || 'Einträge'"></p>
             <p class="text-sm text-muted" x-show="mode === 'score' && one_at_a_time">In der Reihenfolge, in der ihr sie besucht.</p>
             <x-list-editor class="mt-3" x-effect="placeholder = 'z. B. ' + (item_label || 'Eintrag') + ' …'" name="stations" :items="old('stations') ?: ['', '']" placeholder="" add-label="Weitere hinzufügen" />
+        </section>
+
+        <section class="panel p-5" x-show="mode === 'score'">
+            <h2 class="text-xl">Darstellung der Punkte</h2>
+            <p class="mt-1 text-sm text-muted">So vergeben alle ihre 1 bis 10 Punkte auf dem Handy.</p>
+            <x-rating-style-options class="mt-4" model="rating_style" :selected="$initial['rating_style']" />
         </section>
 
         <section class="panel p-5" x-show="mode === 'score'">

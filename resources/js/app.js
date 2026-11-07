@@ -29,15 +29,17 @@ Alpine.data('poller', (url, key, interval = 4000) => ({
     },
 }));
 
-Alpine.data('lights', (initial = 0) => ({
+Alpine.data('rating', (initial = 0) => ({
     value: Number(initial) || 0,
     preview: 0,
     get shown() {
         return this.preview || this.value;
     },
-    pick(n) {
+    pick(n, final = true) {
+        const changed = this.value !== n;
         this.value = n;
-        if (navigator.vibrate) navigator.vibrate(8);
+        this.$nextTick(() => this.$dispatch('rated'));
+        if (final && changed && navigator.vibrate) navigator.vibrate(8);
     },
 }));
 
@@ -45,10 +47,10 @@ Alpine.data('ballot', (count) => ({
     count,
     filled: 0,
     update() {
-        this.filled = this.$root.querySelectorAll('input[type=radio]:checked').length;
+        this.filled = [...this.$root.querySelectorAll('input[data-score]')].filter((input) => input.value).length;
     },
     init() {
-        this.update();
+        this.$nextTick(() => this.update());
     },
 }));
 

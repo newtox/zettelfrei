@@ -238,6 +238,56 @@ select.field {
     margin-top: 0.3rem;
 }
 
+.rating-slider {
+    appearance: none;
+    height: 2.75rem;
+    background: transparent;
+    cursor: pointer;
+}
+.rating-slider::-webkit-slider-runnable-track {
+    height: 0.6rem;
+    border-radius: 999px;
+    background: var(--bulb-off);
+}
+.rating-slider::-moz-range-track {
+    height: 0.6rem;
+    border-radius: 999px;
+    background: var(--bulb-off);
+}
+.rating-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-top: -0.825rem;
+    border-radius: 999px;
+    background: var(--glow);
+    box-shadow: 0 0 1rem -0.1rem var(--glow);
+    border: 3px solid var(--surface);
+}
+.rating-slider::-moz-range-thumb {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    background: var(--glow);
+    box-shadow: 0 0 1rem -0.1rem var(--glow);
+    border: 3px solid var(--surface);
+}
+.rating-slider.is-untouched::-webkit-slider-thumb {
+    background: var(--muted);
+    box-shadow: none;
+}
+.rating-slider.is-untouched::-moz-range-thumb {
+    background: var(--muted);
+    box-shadow: none;
+}
+.rating-slider:focus-visible {
+    outline: none;
+}
+.rating-slider:focus-visible::-webkit-slider-thumb {
+    outline: 3px solid var(--ink);
+    outline-offset: 2px;
+}
+
 .rank-card {
     transition: opacity 0.4s ease;
 }
