@@ -670,4 +670,29 @@ class ZettelfreiTest extends TestCase
         $this->assertFalse($room->one_at_a_time);
         $this->actingAs($room->owner)->get(route('rooms.manage', $room))->assertSee('Haushalte');
     }
+
+    public function test_duplicate_entries_show_one_message_per_value(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->from(route('rooms.create'))->post(route('rooms.store'), [
+            'name' => 'Test', 'theme' => 'dark', 'mode' => 'score',
+            'item_label' => 'Test', 'items_label' => 'Test',
+            'criteria' => ['Test', 'test', 'Test'],
+            'stations' => ['Test', 'Test', 'TEST'],
+        ]);
+
+        $response->assertSessionHasErrors(['stations.0', 'criteria.0']);
+        $this->assertSame(0, Room::count());
+
+        $html = $this->actingAs($user)->from(route('rooms.create'))->followingRedirects()->post(route('rooms.store'), [
+            'name' => 'Test', 'theme' => 'dark', 'mode' => 'score',
+            'item_label' => 'Test', 'items_label' => 'Test',
+            'criteria' => ['Test', 'test', 'Test'],
+            'stations' => ['Test', 'Test', 'TEST'],
+        ])->getContent();
+
+        $this->assertSame(1, substr_count($html, '<li>„Test“ steht mehrfach in der Liste.</li>'));
+        $this->assertSame(1, substr_count($html, '<li>Das Kriterium „Test“ steht mehrfach in der Liste.</li>'));
+    }
 }

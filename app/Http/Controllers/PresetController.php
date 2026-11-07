@@ -52,10 +52,10 @@ class PresetController extends Controller
         return $request->validate([
             'name' => ['required', 'string', 'max:60'],
             'criteria' => ['required', 'array', 'min:1', 'max:15'],
-            'criteria.*' => ['string', 'max:60', 'distinct'],
+            'criteria.*' => ['string', 'max:60', 'distinct:ignore_case'],
         ], [
             'criteria.required' => 'Mindestens ein Kriterium wird benötigt.',
-            'criteria.*.distinct' => 'Jedes Kriterium darf nur einmal vorkommen.',
+            'criteria.*.distinct' => 'Das Kriterium „:input“ steht mehrfach in der Liste.',
         ]);
     }
 }
