@@ -81,72 +81,65 @@
 
                     <ol class="mt-5 space-y-2">
                         @foreach ($room->stations as $station)
+                            @php
+                                $votesInit = $station->ballots_count.' von '.$station->eligibleVoterCount().' abgestimmt';
+                                $photosInit = $station->photos_count.' '.($station->photos_count === 1 ? 'Foto' : 'Fotos');
+                                $statusText = $choice ? null : $statusLabel[$station->status];
+                            @endphp
                             <li @class([
                                 'rounded-2xl p-4',
                                 'bg-raised ring-2 ring-live' => ! $choice && $station->isOpen(),
                                 'bg-page/40' => $choice || ! $station->isOpen(),
                             ])>
-                                <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
+                                <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:gap-x-4">
                                     <span class="font-display w-6 text-xl text-muted">{{ $loop->iteration }}</span>
-                                    <div class="min-w-0 flex-1">
-                                        <p class="truncate text-lg font-semibold">{{ $station->name }}</p>
+                                    <div class="min-w-0">
+                                        <p class="break-words text-lg font-semibold leading-snug">{{ $station->name }}</p>
                                         <p class="text-sm text-muted">
-                                            @unless ($choice)
-                                                @if ($station->isOpen())
-                                                    <span class="font-semibold text-live">{{ $statusLabel[$station->status] }}</span>,
-                                                @elseif ($station->status === 'closed')
-                                                    {{ $statusLabel[$station->status] }},
-                                                @else
-                                                    {{ $statusLabel[$station->status] }},
-                                                @endif
-                                                <span x-text="(() => { const s = data?.stations.find(s => s.id === {{ $station->id }}); return s ? s.votes + ' von ' + s.eligible : '{{ $station->ballots_count }} von {{ $station->eligibleVoterCount() }}' })()">{{ $station->ballots_count }} von {{ $station->eligibleVoterCount() }}</span> abgestimmt
-                                            @endunless
-                                            @if ($room->photos_enabled)
-                                                {{ $choice ? '' : ',' }}
-                                                <span x-text="(() => { const s = data?.stations.find(s => s.id === {{ $station->id }}); return s ? s.photos + (s.photos === 1 ? ' Foto' : ' Fotos') : '{{ $station->photos_count }} {{ $station->photos_count === 1 ? 'Foto' : 'Fotos' }}' })()">{{ $station->photos_count }} {{ $station->photos_count === 1 ? 'Foto' : 'Fotos' }}</span>
-                                            @endif
+                                            @if ($statusText)<span @class(['font-semibold text-live' => $station->isOpen()])>{{ $statusText }}</span>, <span x-text="(() => { const s = data?.stations.find(s => s.id === {{ $station->id }}); return s ? s.votes + ' von ' + s.eligible + ' abgestimmt' : @js($votesInit) })()">{{ $votesInit }}</span>@endif{{ $statusText && $room->photos_enabled ? ', ' : '' }}@if ($room->photos_enabled)<span x-text="(() => { const s = data?.stations.find(s => s.id === {{ $station->id }}); return s ? s.photos + (s.photos === 1 ? ' Foto' : ' Fotos') : @js($photosInit) })()">{{ $photosInit }}</span>@endif
                                         </p>
                                     </div>
-                                    <div class="flex items-center gap-1">
-                                        @if ($choice)
-                                        @elseif ($station->isOpen())
-                                            <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.close', [$room, $station]) }}">
-                                                @csrf
-                                                <button class="btn btn-live btn-sm">Bewertung schließen</button>
+                                    <details class="relative order-3 sm:order-4">
+                                        <summary class="grid size-10 cursor-pointer list-none place-items-center rounded-full text-muted hover:bg-raised" aria-label="Mehr für {{ $station->name }}">
+                                            <svg viewBox="0 0 20 20" class="size-5" fill="currentColor"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>
+                                        </summary>
+                                        <div class="absolute right-0 z-10 mt-2 w-72 max-w-[calc(100vw-3rem)] space-y-3 rounded-2xl bg-surface p-4 shadow-2xl ring-1 ring-line">
+                                            <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.update', [$room, $station]) }}" class="space-y-2">
+                                                @csrf @method('PATCH')
+                                                <input name="name" value="{{ $station->name }}" maxlength="60" class="field min-h-10 text-base" aria-label="Neuer Name">
+                                                <button class="btn btn-quiet btn-sm w-full">Umbenennen</button>
                                             </form>
-                                        @elseif (! $room->isRevealing())
-                                            <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.open', [$room, $station]) }}">
-                                                @csrf
-                                                <button class="btn btn-sm {{ $station->status === 'pending' ? 'btn-primary' : 'btn-quiet' }}">{{ $station->status === 'pending' ? 'Bewertung öffnen' : 'Wieder öffnen' }}</button>
-                                            </form>
-                                        @endif
-                                        <details class="relative">
-                                            <summary class="grid size-9 cursor-pointer list-none place-items-center rounded-full text-muted hover:bg-raised" aria-label="Mehr für {{ $station->name }}">
-                                                <svg viewBox="0 0 20 20" class="size-5" fill="currentColor"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>
-                                            </summary>
-                                            <div class="absolute right-0 z-10 mt-2 w-64 space-y-3 rounded-2xl bg-surface p-4 shadow-2xl ring-1 ring-line">
-                                                <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.update', [$room, $station]) }}" class="flex gap-2">
-                                                    @csrf @method('PATCH')
-                                                    <input name="name" value="{{ $station->name }}" maxlength="60" class="field min-h-10 text-base" aria-label="Neuer Name">
-                                                    <button class="btn btn-quiet btn-sm">Umbenennen</button>
+                                            <div class="flex gap-2">
+                                                <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'up']) }}" class="flex-1">
+                                                    @csrf
+                                                    <button class="btn btn-quiet btn-sm w-full" @disabled($loop->first)>Nach oben</button>
                                                 </form>
-                                                <div class="flex gap-2">
-                                                    <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'up']) }}" class="flex-1">
-                                                        @csrf
-                                                        <button class="btn btn-quiet btn-sm w-full" @disabled($loop->first)>Nach oben</button>
-                                                    </form>
-                                                    <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'down']) }}" class="flex-1">
-                                                        @csrf
-                                                        <button class="btn btn-quiet btn-sm w-full" @disabled($loop->last)>Nach unten</button>
-                                                    </form>
-                                                </div>
-                                                <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.destroy', [$room, $station]) }}" data-confirm="{{ ($station->name).' samt Stimmen und Fotos löschen?' }}" data-confirm-action="Löschen" data-confirm-danger>
-                                                    @csrf @method('DELETE')
-                                                    <button class="text-sm font-semibold text-live">{{ $room->item_label }} löschen</button>
+                                                <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'down']) }}" class="flex-1">
+                                                    @csrf
+                                                    <button class="btn btn-quiet btn-sm w-full" @disabled($loop->last)>Nach unten</button>
                                                 </form>
                                             </div>
-                                        </details>
-                                    </div>
+                                            <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.destroy', [$room, $station]) }}" data-confirm="{{ ($station->name).' samt Stimmen und Fotos löschen?' }}" data-confirm-action="Löschen" data-confirm-danger>
+                                                @csrf @method('DELETE')
+                                                <button class="text-sm font-semibold text-live">{{ $room->item_label }} löschen</button>
+                                            </form>
+                                        </div>
+                                    </details>
+                                    @if (! $choice && ($station->isOpen() || ! $room->isRevealing()))
+                                        <div class="order-4 col-span-3 sm:order-3 sm:col-span-1">
+                                            @if ($station->isOpen())
+                                                <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.close', [$room, $station]) }}">
+                                                    @csrf
+                                                    <button class="btn btn-live btn-sm w-full sm:w-auto">Bewertung schließen</button>
+                                                </form>
+                                            @else
+                                                <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.open', [$room, $station]) }}">
+                                                    @csrf
+                                                    <button class="btn btn-sm w-full sm:w-auto {{ $station->status === 'pending' ? 'btn-primary' : 'btn-quiet' }}">{{ $station->status === 'pending' ? 'Bewertung öffnen' : 'Wieder öffnen' }}</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </li>
                         @endforeach

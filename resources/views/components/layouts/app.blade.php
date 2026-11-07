@@ -15,12 +15,12 @@
 </head>
 <body class="min-h-dvh antialiased">
     <header class="mx-auto flex items-center justify-between gap-4 px-5 pt-5 {{ $wide ? 'max-w-6xl' : 'max-w-xl' }}">
-         <a href="{{ route(auth()->check() ? 'dashboard' : 'home') }}" class="flex items-center gap-2.5 font-display text-lg">
+         <a href="{{ route(auth()->check() ? 'dashboard' : 'home') }}" class="flex shrink-0 items-center gap-2.5 font-display text-lg">
             <svg viewBox="0 0 24 24" class="h-7 w-7" aria-hidden="true"><path d="M5 3h10l4 4v14H5z" fill="currentColor" class="text-glow"/><path d="M15 3v4h4" fill="none" stroke="currentColor" stroke-width="1.5" class="text-glow-ink" opacity=".35"/><path d="M8.5 13.2l2.4 2.4 4.6-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-glow-ink"/></svg>
             {{ config('app.name') }}
         </a>
-        <nav class="flex items-center gap-1 text-sm">
-            @auth
+        @auth
+            <nav class="hidden items-center gap-1 whitespace-nowrap text-sm sm:flex">
                 <a href="{{ route('dashboard') }}" class="rounded-full px-3 py-2 hover:bg-raised">Meine Räume</a>
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('admin.rooms') }}" class="rounded-full px-3 py-2 hover:bg-raised">Admin</a>
@@ -29,8 +29,21 @@
                     @csrf
                     <button class="rounded-full px-3 py-2 text-muted hover:bg-raised">Abmelden</button>
                 </form>
-            @endauth
-        </nav>
+            </nav>
+            <details class="relative sm:hidden">
+                <summary class="btn btn-quiet btn-sm list-none">Menü</summary>
+                <div class="absolute right-0 z-30 mt-2 flex w-52 flex-col rounded-2xl bg-surface p-2 text-sm shadow-2xl ring-1 ring-line">
+                    <a href="{{ route('dashboard') }}" class="rounded-xl px-3 py-2.5 hover:bg-raised">Meine Räume</a>
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.rooms') }}" class="rounded-xl px-3 py-2.5 hover:bg-raised">Admin</a>
+                    @endif
+                    <form novalidate data-form-type="other" method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="w-full rounded-xl px-3 py-2.5 text-left text-muted hover:bg-raised">Abmelden</button>
+                    </form>
+                </div>
+            </details>
+        @endauth
     </header>
 
     <main class="mx-auto px-5 pb-16 pt-6 {{ $wide ? 'max-w-6xl' : 'max-w-xl' }}">
