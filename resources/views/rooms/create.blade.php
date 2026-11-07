@@ -34,8 +34,8 @@
                 if (preset) this.$dispatch('set-criteria', preset.criteria);
             },
         }">
-        @csrf
-        <input type="hidden" name="template" :value="template">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+        <input data-form-type="other" type="hidden" name="template" :value="template">
         <x-errors />
 
         <section>
@@ -53,7 +53,7 @@
         <section class="panel space-y-4 p-5">
             <div>
                 <label for="name" class="mb-1.5 block font-semibold">Name des Raums</label>
-                <input id="name" name="name" @error('name') aria-invalid="true" @enderror x-model="name" maxlength="80" class="field" required>
+                <input data-form-type="other" id="name" name="name" @error('name') aria-invalid="true" @enderror x-model="name" maxlength="80" class="field" required>
                 <p class="mt-1.5 text-sm text-muted" x-show="mode === 'choice'" x-cloak>Bei Umfragen am besten gleich als Frage, die steht dann groß über der Abstimmung.</p>
             </div>
             <fieldset>
@@ -67,7 +67,7 @@
             <div class="mt-3 grid grid-cols-2 gap-2">
                 @foreach (\App\Models\Room::MODES as $key => $label)
                     <label class="cursor-pointer">
-                        <input type="radio" name="mode" value="{{ $key }}" x-model="mode" class="peer sr-only">
+                        <input data-form-type="other" type="radio" name="mode" value="{{ $key }}" x-model="mode" class="peer sr-only">
                         <span class="block h-full rounded-2xl p-3.5 ring-1 ring-line ring-inset peer-checked:ring-2 peer-checked:ring-glow peer-focus-visible:outline-3 peer-focus-visible:outline-glow">
                             <span class="block font-semibold">{{ $label }}</span>
                             <span class="mt-0.5 block text-sm text-muted">{{ $key === 'score' ? 'Jeder gibt 1 bis 10 Punkte pro Kriterium' : 'Jeder wählt seine Favoriten aus' }}</span>
@@ -77,7 +77,7 @@
             </div>
             <div x-show="mode === 'choice'" x-cloak class="mt-4 flex items-center justify-between gap-4">
                 <label for="max_choices" class="font-semibold">Wie viele darf jeder auswählen?</label>
-                <input id="max_choices" name="max_choices" @error('max_choices') aria-invalid="true" @enderror type="number" min="1" max="10" x-model.number="max_choices" class="field w-20 text-center">
+                <input data-form-type="other" id="max_choices" name="max_choices" @error('max_choices') aria-invalid="true" @enderror type="number" min="1" max="10" x-model.number="max_choices" class="field w-20 text-center">
             </div>
         </section>
 
@@ -88,11 +88,11 @@
             <div class="mt-1.5 grid grid-cols-2 gap-2">
                 <div>
                     <label for="item_label" class="mb-1 block text-sm text-muted">Einzahl</label>
-                    <input id="item_label" name="item_label" @error('item_label') aria-invalid="true" @enderror x-model="item_label" maxlength="30" class="field" required>
+                    <input data-form-type="other" id="item_label" name="item_label" @error('item_label') aria-invalid="true" @enderror x-model="item_label" maxlength="30" class="field" required>
                 </div>
                 <div>
                     <label for="items_label" class="mb-1 block text-sm text-muted">Mehrzahl</label>
-                    <input id="items_label" name="items_label" @error('items_label') aria-invalid="true" @enderror x-model="items_label" maxlength="30" class="field" required>
+                    <input data-form-type="other" id="items_label" name="items_label" @error('items_label') aria-invalid="true" @enderror x-model="items_label" maxlength="30" class="field" required>
                 </div>
             </div>
             <p class="mt-4 font-semibold" x-text="items_label || 'Einträge'"></p>
@@ -115,10 +115,10 @@
 
             @if ($canSavePreset)
                 <label class="mt-5 flex items-center gap-2 text-sm">
-                    <input type="checkbox" name="save_preset" value="1" x-model="save_preset" class="size-4 accent-[var(--glow)]">
+                    <input data-form-type="other" type="checkbox" name="save_preset" value="1" x-model="save_preset" class="size-4 accent-[var(--glow)]">
                     Diese Kriterien als eigene Vorlage speichern
                 </label>
-                <input x-show="save_preset" x-cloak name="preset_name" value="{{ old('preset_name') }}" maxlength="60" placeholder="Name der Vorlage" class="field mt-3">
+                <input data-form-type="other" x-show="save_preset" x-cloak name="preset_name" value="{{ old('preset_name') }}" maxlength="60" placeholder="Name der Vorlage" class="field mt-3">
             @endif
         </section>
 

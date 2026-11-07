@@ -9,7 +9,7 @@
 <div class="grid grid-cols-3 gap-2">
     @foreach (\App\Models\Room::THEMES as $key => $label)
         <label class="cursor-pointer">
-            <input type="radio" name="{{ $name }}" value="{{ $key }}" class="peer sr-only" @checked($selected === $key) @if ($model) x-model="{{ $model }}" @endif>
+            <input data-form-type="other" type="radio" name="{{ $name }}" value="{{ $key }}" class="peer sr-only" @checked($selected === $key) @if ($model) x-model="{{ $model }}" @endif>
             <span class="block rounded-2xl p-2.5 ring-1 ring-line ring-inset peer-checked:ring-2 peer-checked:ring-glow peer-focus-visible:outline-3 peer-focus-visible:outline-glow">
                 <span class="flex h-10 overflow-hidden rounded-lg">
                     <span class="flex-[3]" style="background: {{ $swatches[$key][0] }}"></span>

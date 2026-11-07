@@ -21,7 +21,7 @@
                         if (this.picked.includes(id)) { this.picked = this.picked.filter(p => p !== id); return; }
                         if (this.picked.length < this.max) this.picked.push(id);
                     } }">
-                @csrf
+                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                 <x-errors />
                 <ul class="space-y-2.5">
                     @foreach ($room->stations as $option)
@@ -57,7 +57,7 @@
                     @endforeach
                 </ul>
                 <template x-for="id in picked" :key="id">
-                    <input type="hidden" name="options[]" :value="id">
+                    <input data-form-type="other" type="hidden" name="options[]" :value="id">
                 </template>
 
                 <div class="sticky bottom-3 mt-5">
@@ -91,7 +91,7 @@
                 <a href="{{ route('play.gallery', $room) }}" class="font-semibold underline decoration-line underline-offset-4 hover:decoration-glow">Fotos ansehen und hinzufügen</a>
             @endif
             <form novalidate data-form-type="other" method="POST" action="{{ route('play.leave', $room) }}" data-confirm="Wirklich austreten? Deine bisherige Stimme bleibt anonym erhalten." data-confirm-action="Austreten" data-confirm-danger>
-                @csrf
+                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                 <button class="text-muted underline decoration-line underline-offset-4">Nicht {{ $participant->name }}? Austreten</button>
             </form>
         </div>

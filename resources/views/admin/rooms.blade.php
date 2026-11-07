@@ -2,7 +2,7 @@
     @include('admin.nav')
 
     <form novalidate data-form-type="other" method="GET" class="mt-6 flex gap-2">
-        <input name="q" value="{{ $search }}" placeholder="Name oder Code suchen" class="field max-w-sm">
+        <input data-form-type="other" name="q" value="{{ $search }}" placeholder="Name oder Code suchen" class="field max-w-sm">
         <button class="btn btn-quiet shrink-0">Suchen</button>
         @if ($search !== '')
             <a href="{{ route('admin.rooms') }}" class="btn btn-quiet shrink-0">Zurücksetzen</a>
@@ -55,11 +55,11 @@
                             <td class="px-4 py-3">
                                 <div class="flex justify-end gap-1.5">
                                     <form novalidate data-form-type="other" method="POST" action="{{ route('admin.rooms.keep', $r) }}">
-                                        @csrf
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                         <button class="btn btn-quiet btn-sm">{{ $r->keep ? 'Nicht mehr behalten' : 'Behalten' }}</button>
                                     </form>
                                     <form novalidate data-form-type="other" method="POST" action="{{ route('admin.rooms.destroy', $r) }}" data-confirm="{{ 'Raum „'.$r->name.'“ mit allen Stimmen und Fotos endgültig löschen?' }}" data-confirm-action="Raum löschen" data-confirm-danger>
-                                        @csrf @method('DELETE')
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                                         <button class="btn btn-sm text-live hover:bg-raised">Löschen</button>
                                     </form>
                                 </div>

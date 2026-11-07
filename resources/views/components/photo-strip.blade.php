@@ -9,7 +9,7 @@
                     </a>
                     @if ($isOwner || ($participant && $photo->participant_id === $participant->id))
                         <form novalidate data-form-type="other" method="POST" action="{{ route('photos.destroy', [$room, $photo]) }}" class="absolute right-1.5 top-1.5" data-confirm="Foto löschen?" data-confirm-action="Löschen" data-confirm-danger>
-                            @csrf @method('DELETE')
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                             <button class="grid size-8 place-items-center rounded-full bg-black/60 text-white" aria-label="Foto löschen">
                                 <svg viewBox="0 0 20 20" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>
                             </button>
@@ -25,7 +25,7 @@
             <label class="btn btn-quiet w-full cursor-pointer" :class="busy && 'pointer-events-none opacity-60'">
                 <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
                 <span x-text="busy ? 'Lade hoch … ' + done + '/' + total : 'Foto hinzufügen'">Foto hinzufügen</span>
-                <input type="file" accept="image/*" multiple class="sr-only" @change="upload($event)">
+                <input data-form-type="other" type="file" accept="image/*" multiple class="sr-only" @change="upload($event)">
             </label>
             <p x-show="error" x-text="error" x-cloak class="mt-2 text-sm text-live"></p>
         </div>

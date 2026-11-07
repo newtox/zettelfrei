@@ -5,11 +5,11 @@
     </section>
 
     <form novalidate data-form-type="other" method="POST" action="{{ route('join.find') }}" class="panel mt-8 p-5">
-        @csrf
+        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
         <label for="code" class="block font-semibold">Raum-Code</label>
         <p class="mt-0.5 text-sm text-muted">Steht unter dem QR-Code, den dir jemand zeigt.</p>
         <div class="mt-3 flex gap-2">
-            <input id="code" name="code" @error('code') aria-invalid="true" @enderror value="{{ old('code') }}" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. K7TQ2W" class="field font-semibold uppercase tracking-[0.2em] placeholder:tracking-normal placeholder:normal-case" required>
+            <input data-form-type="other" id="code" name="code" @error('code') aria-invalid="true" @enderror value="{{ old('code') }}" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. K7TQ2W" class="field font-semibold uppercase tracking-[0.2em] placeholder:tracking-normal placeholder:normal-case" required>
             <button class="btn btn-primary shrink-0">Beitreten</button>
         </div>
         @error('code')

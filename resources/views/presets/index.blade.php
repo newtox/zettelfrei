@@ -21,15 +21,15 @@
                         <span class="shrink-0 text-sm font-semibold text-muted group-open:hidden">Bearbeiten</span>
                     </summary>
                     <form novalidate data-form-type="other" method="POST" action="{{ route('presets.update', $preset) }}" class="mt-5 space-y-4">
-                        @csrf @method('PUT')
-                        <input name="name" value="{{ $preset->name }}" maxlength="60" class="field" required aria-label="Name der Vorlage">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="PUT" data-form-type="other">
+                        <input data-form-type="other" name="name" value="{{ $preset->name }}" maxlength="60" class="field" required aria-label="Name der Vorlage">
                         <x-list-editor name="criteria" :items="$preset->criteria" placeholder="Kriterium" add-label="Kriterium hinzufügen" />
                         <div class="flex items-center justify-between gap-3">
                             <button class="btn btn-primary btn-sm">Speichern</button>
                         </div>
                     </form>
                     <form novalidate data-form-type="other" method="POST" action="{{ route('presets.destroy', $preset) }}" class="mt-3" data-confirm="Vorlage löschen?" data-confirm-action="Löschen" data-confirm-danger>
-                        @csrf @method('DELETE')
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                         <button class="text-sm font-semibold text-live">Vorlage löschen</button>
                     </form>
                 </details>
@@ -40,8 +40,8 @@
     <section class="panel mt-8 p-5">
         <h2 class="text-xl">Neue Vorlage</h2>
         <form novalidate data-form-type="other" method="POST" action="{{ route('presets.store') }}" class="mt-4 space-y-4">
-            @csrf
-            <input name="name" placeholder="Name, z. B. Unsere Kriterien" maxlength="60" class="field" required>
+            <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+            <input data-form-type="other" name="name" placeholder="Name, z. B. Unsere Kriterien" maxlength="60" class="field" required>
             <x-list-editor name="criteria" :items="['']" placeholder="Kriterium" add-label="Kriterium hinzufügen" />
             <button class="btn btn-primary">Vorlage speichern</button>
         </form>

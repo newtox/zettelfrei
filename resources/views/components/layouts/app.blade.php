@@ -25,7 +25,7 @@
                     <a href="{{ route('admin.rooms') }}" class="rounded-full px-3 py-2 hover:bg-raised">Admin</a>
                 @endif
                 <form novalidate data-form-type="other" method="POST" action="{{ route('logout') }}">
-                    @csrf
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                     <button class="rounded-full px-3 py-2 text-muted hover:bg-raised">Abmelden</button>
                 </form>
             </nav>
@@ -37,7 +37,7 @@
                         <a href="{{ route('admin.rooms') }}" class="rounded-xl px-3 py-2.5 hover:bg-raised">Admin</a>
                     @endif
                     <form novalidate data-form-type="other" method="POST" action="{{ route('logout') }}">
-                        @csrf
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                         <button class="w-full rounded-xl px-3 py-2.5 text-left text-muted hover:bg-raised">Abmelden</button>
                     </form>
                 </div>

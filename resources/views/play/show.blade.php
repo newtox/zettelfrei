@@ -37,7 +37,7 @@
                 </div>
             @else
                 <form novalidate data-form-type="other" method="POST" action="{{ route('play.vote', [$room, $station]) }}" class="mt-6 space-y-3" x-data="ballot({{ $room->criteria->count() }})" @change="update()">
-                    @csrf
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                     <x-errors />
                     @foreach ($room->criteria as $criterion)
                         @php $current = old('scores.'.$criterion->id, $scores[$criterion->id] ?? 0); @endphp
@@ -49,7 +49,7 @@
                             <div class="lights mt-1" @mouseleave="preview = 0">
                                 @for ($n = 1; $n <= 10; $n++)
                                     <label class="bulb" :class="{ 'is-lit': shown >= {{ $n }}, 'is-picked': value === {{ $n }} }" @mouseenter="preview = {{ $n }}">
-                                        <input type="radio" name="scores[{{ $criterion->id }}]" value="{{ $n }}" @checked((int) $current === $n) @change="pick({{ $n }})" aria-label="{{ $n }} {{ $n === 1 ? 'Punkt' : 'Punkte' }} für {{ $criterion->name }}">
+                                        <input data-form-type="other" type="radio" name="scores[{{ $criterion->id }}]" value="{{ $n }}" @checked((int) $current === $n) @change="pick({{ $n }})" aria-label="{{ $n }} {{ $n === 1 ? 'Punkt' : 'Punkte' }} für {{ $criterion->name }}">
                                         <span class="cap"></span>
                                         <span class="glass">{{ $n }}</span>
                                     </label>
@@ -127,7 +127,7 @@
                     <a href="{{ route('play.gallery', $room) }}" class="font-semibold underline decoration-line underline-offset-4 hover:decoration-glow">Alle Fotos</a>
                 @endif
                 <form novalidate data-form-type="other" method="POST" action="{{ route('play.leave', $room) }}" data-confirm="Wirklich austreten? Deine bisherigen Stimmen bleiben anonym erhalten." data-confirm-action="Austreten" data-confirm-danger>
-                    @csrf
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                     <button class="text-muted underline decoration-line underline-offset-4">Nicht {{ $participant->name }}? Austreten</button>
                 </form>
             </div>

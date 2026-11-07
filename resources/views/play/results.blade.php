@@ -94,13 +94,13 @@
                 <div class="mt-3 flex flex-wrap gap-2">
                     @unless ($full)
                         <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}">
-                            @csrf
-                            <input type="hidden" name="action" value="next">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                            <input data-form-type="other" type="hidden" name="action" value="next">
                             <button class="btn btn-primary">{{ $revealed === $count - 1 ? 'Sieger aufdecken' : 'Nächsten Platz aufdecken' }}</button>
                         </form>
                         <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}">
-                            @csrf
-                            <input type="hidden" name="action" value="all">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                            <input data-form-type="other" type="hidden" name="action" value="all">
                             <button class="btn btn-quiet">Rest auf einmal</button>
                         </form>
                     @endunless

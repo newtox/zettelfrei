@@ -3,7 +3,7 @@
     <ul class="space-y-2">
         <template x-for="(item, i) in items" :key="item.id">
             <li class="flex items-center gap-1.5">
-                <input data-item type="text" name="{{ $name }}[]" x-model="item.v" :placeholder="placeholder" maxlength="60" class="field" @keydown.enter.prevent="onEnter(i)">
+                <input data-form-type="other" data-item type="text" name="{{ $name }}[]" x-model="item.v" :placeholder="placeholder" maxlength="60" class="field" @keydown.enter.prevent="onEnter(i)">
                 <button type="button" @click="move(i, -1)" :disabled="i === 0" class="grid size-10 shrink-0 place-items-center rounded-full text-muted hover:bg-raised disabled:opacity-30" aria-label="Nach oben">
                     <svg viewBox="0 0 20 20" class="size-4" fill="currentColor"><path d="M10 5l6 7H4z"/></svg>
                 </button>

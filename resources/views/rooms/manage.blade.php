@@ -30,7 +30,7 @@
                 <h2 class="text-xl">Speicher dir diesen Admin-Link</h2>
                 <p class="mt-1 max-w-2xl text-sm text-muted">Dieses Gerät merkt sich, dass du den Raum verwaltest. Auf einem anderen Gerät, oder falls du deine Browserdaten löschst, kommst du nur mit diesem Link wieder in die Verwaltung. Gib ihn nur weiter, wenn die Person mitverwalten soll.</p>
                 <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-                    <input readonly value="{{ $room->adminUrl() }}" class="field min-h-10 font-mono text-sm" @focus="$el.select()" aria-label="Admin-Link">
+                    <input data-form-type="other" readonly value="{{ $room->adminUrl() }}" class="field min-h-10 font-mono text-sm" @focus="$el.select()" aria-label="Admin-Link">
                     <button type="button" @click="copy()" class="btn btn-primary btn-sm shrink-0" x-text="copied ? 'Kopiert' : 'Link kopieren'">Link kopieren</button>
                 </div>
             </section>
@@ -48,12 +48,12 @@
                             </div>
                             @if ($room->voting_open)
                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.close-all', $room) }}">
-                                    @csrf
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                     <button class="btn btn-live btn-sm">Abstimmung schließen</button>
                                 </form>
                             @elseif (! $room->isRevealing())
                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.open-all', $room) }}">
-                                    @csrf
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                     <button class="btn btn-primary btn-sm">Abstimmung öffnen</button>
                                 </form>
                             @endif
@@ -66,11 +66,11 @@
                             @unless ($room->isRevealing())
                                 <div class="flex gap-2">
                                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.open-all', $room) }}">
-                                        @csrf
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                         <button class="btn btn-primary btn-sm">Alle öffnen</button>
                                     </form>
                                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.close-all', $room) }}">
-                                        @csrf
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                         <button class="btn btn-quiet btn-sm">Alle schließen</button>
                                     </form>
                                 </div>
@@ -105,22 +105,22 @@
                                         </summary>
                                         <div class="absolute right-0 z-10 mt-2 w-72 max-w-[calc(100vw-3rem)] space-y-3 rounded-2xl bg-surface p-4 shadow-2xl ring-1 ring-line">
                                             <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.update', [$room, $station]) }}" class="space-y-2">
-                                                @csrf @method('PATCH')
-                                                <input name="name" value="{{ $station->name }}" maxlength="60" class="field min-h-10 text-base" aria-label="Neuer Name">
+                                                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="PATCH" data-form-type="other">
+                                                <input data-form-type="other" name="name" value="{{ $station->name }}" maxlength="60" class="field min-h-10 text-base" aria-label="Neuer Name">
                                                 <button class="btn btn-quiet btn-sm w-full">Umbenennen</button>
                                             </form>
                                             <div class="flex gap-2">
                                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'up']) }}" class="flex-1">
-                                                    @csrf
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                                     <button class="btn btn-quiet btn-sm w-full" @disabled($loop->first)>Nach oben</button>
                                                 </form>
                                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.move', [$room, $station, 'down']) }}" class="flex-1">
-                                                    @csrf
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                                     <button class="btn btn-quiet btn-sm w-full" @disabled($loop->last)>Nach unten</button>
                                                 </form>
                                             </div>
                                             <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.destroy', [$room, $station]) }}" data-confirm="{{ ($station->name).' samt Stimmen und Fotos löschen?' }}" data-confirm-action="Löschen" data-confirm-danger>
-                                                @csrf @method('DELETE')
+                                                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                                                 <button class="text-sm font-semibold text-live">{{ $room->item_label }} löschen</button>
                                             </form>
                                         </div>
@@ -129,12 +129,12 @@
                                         <div class="order-4 col-span-3 sm:order-3 sm:col-span-1">
                                             @if ($station->isOpen())
                                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.close', [$room, $station]) }}">
-                                                    @csrf
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                                     <button class="btn btn-live btn-sm w-full sm:w-auto">Bewertung schließen</button>
                                                 </form>
                                             @else
                                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.open', [$room, $station]) }}">
-                                                    @csrf
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                                     <button class="btn btn-sm w-full sm:w-auto {{ $station->status === 'pending' ? 'btn-primary' : 'btn-quiet' }}">{{ $station->status === 'pending' ? 'Bewertung öffnen' : 'Wieder öffnen' }}</button>
                                                 </form>
                                             @endif
@@ -146,8 +146,8 @@
                     </ol>
 
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.stations.store', $room) }}" class="mt-4 flex gap-2">
-                        @csrf
-                        <input name="name" placeholder="{{ $room->item_label }} hinzufügen" maxlength="60" class="field" required>
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                        <input data-form-type="other" name="name" placeholder="{{ $room->item_label }} hinzufügen" maxlength="60" class="field" required>
                         <button class="btn btn-quiet shrink-0">Hinzufügen</button>
                     </form>
                 </section>
@@ -158,13 +158,13 @@
                         <p class="mt-1 text-muted">Bis hierhin sieht niemand ein Ergebnis, auch du nicht. Beim Aufdecken wird die Abstimmung geschlossen und alle Handys springen zum Ergebnis.</p>
                         <div class="mt-4 flex flex-wrap gap-2">
                             <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}">
-                                @csrf
-                                <input type="hidden" name="action" value="next">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                                <input data-form-type="other" type="hidden" name="action" value="next">
                                 <button class="btn btn-primary">Platz für Platz aufdecken</button>
                             </form>
                             <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}">
-                                @csrf
-                                <input type="hidden" name="action" value="all">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                                <input data-form-type="other" type="hidden" name="action" value="all">
                                 <button class="btn btn-quiet">Alles auf einmal</button>
                             </form>
                         </div>
@@ -173,8 +173,8 @@
                         <div class="mt-4 flex flex-wrap gap-2">
                             <a href="{{ route('play.results', $room) }}" class="btn btn-primary">Zum Ergebnis</a>
                             <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.reveal', $room) }}" data-confirm="Ergebnis für alle wieder verbergen?" data-confirm-action="Verbergen">
-                                @csrf
-                                <input type="hidden" name="action" value="hide">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                                <input data-form-type="other" type="hidden" name="action" value="hide">
                                 <button class="btn btn-quiet">Wieder verbergen</button>
                             </form>
                         </div>
@@ -195,8 +195,8 @@
                         <button type="button" @click="share()" class="btn btn-quiet btn-sm">Teilen</button>
                     </div>
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.update', $room) }}" class="mt-4">
-                        @csrf @method('PATCH')
-                        <input type="hidden" name="join_locked" value="{{ $room->join_locked ? 0 : 1 }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="PATCH" data-form-type="other">
+                        <input data-form-type="other" type="hidden" name="join_locked" value="{{ $room->join_locked ? 0 : 1 }}">
                         <button class="text-sm text-muted underline underline-offset-4 hover:text-ink">{{ $room->join_locked ? 'Beitritt wieder erlauben' : 'Keine neuen Teilnehmer mehr zulassen' }}</button>
                     </form>
 
@@ -224,7 +224,7 @@
                                         @endif
                                     </div>
                                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.participants.destroy', [$room, $p->id]) }}" data-confirm="{{ ($p->name).' entfernen? Die Person kann danach neu beitreten.' }}" data-confirm-action="Entfernen" data-confirm-danger>
-                                        @csrf @method('DELETE')
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                                         <button class="rounded-full px-2 py-1 text-xs text-muted hover:bg-raised hover:text-live">Entfernen</button>
                                     </form>
                                 </li>
@@ -244,16 +244,16 @@
                             <li class="flex items-center gap-1 py-1.5">
                                 <span class="flex-1 truncate">{{ $criterion->name }}</span>
                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.criteria.move', [$room, $criterion->id, 'up']) }}">
-                                    @csrf
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                     <button class="grid size-8 place-items-center rounded-full text-muted hover:bg-raised disabled:opacity-30" @disabled($loop->first) aria-label="Nach oben"><svg viewBox="0 0 20 20" class="size-3.5" fill="currentColor"><path d="M10 5l6 7H4z"/></svg></button>
                                 </form>
                                 <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.criteria.move', [$room, $criterion->id, 'down']) }}">
-                                    @csrf
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                     <button class="grid size-8 place-items-center rounded-full text-muted hover:bg-raised disabled:opacity-30" @disabled($loop->last) aria-label="Nach unten"><svg viewBox="0 0 20 20" class="size-3.5" fill="currentColor"><path d="M10 15l6-7H4z"/></svg></button>
                                 </form>
                                 @if ($room->criteria->count() > 1)
                                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.criteria.destroy', [$room, $criterion->id]) }}" data-confirm="{{ 'Kriterium „'.($criterion->name).'“ löschen?' }}" data-confirm-action="Löschen" data-confirm-danger>
-                                        @csrf @method('DELETE')
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                                         <button class="grid size-8 place-items-center rounded-full text-muted hover:bg-raised hover:text-live" aria-label="Löschen"><svg viewBox="0 0 20 20" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
                                     </form>
                                 @endif
@@ -261,8 +261,8 @@
                         @endforeach
                     </ul>
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.criteria.store', $room) }}" class="mt-3 flex gap-2">
-                        @csrf
-                        <input name="name" placeholder="Neues Kriterium" maxlength="60" class="field min-h-10 text-base" required>
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                        <input data-form-type="other" name="name" placeholder="Neues Kriterium" maxlength="60" class="field min-h-10 text-base" required>
                         <button class="btn btn-quiet btn-sm shrink-0">Hinzufügen</button>
                     </form>
                 </section>
@@ -271,16 +271,16 @@
                 <section class="panel p-5">
                     <h2 class="text-xl">Ablauf</h2>
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.settings', $room) }}" class="mt-2">
-                        @csrf @method('PATCH')
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="PATCH" data-form-type="other">
                         <p class="mb-1.5 text-sm font-semibold">Bezeichnung der Einträge</p>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label for="item_label" class="mb-1 block text-sm text-muted">Einzahl</label>
-                                <input id="item_label" name="item_label" value="{{ $room->item_label }}" maxlength="30" class="field min-h-10 text-base" required>
+                                <input data-form-type="other" id="item_label" name="item_label" value="{{ $room->item_label }}" maxlength="30" class="field min-h-10 text-base" required>
                             </div>
                             <div>
                                 <label for="items_label" class="mb-1 block text-sm text-muted">Mehrzahl</label>
-                                <input id="items_label" name="items_label" value="{{ $room->items_label }}" maxlength="30" class="field min-h-10 text-base" required>
+                                <input data-form-type="other" id="items_label" name="items_label" value="{{ $room->items_label }}" maxlength="30" class="field min-h-10 text-base" required>
                             </div>
                         </div>
                         <div class="mt-2 divide-y divide-line">
@@ -289,7 +289,7 @@
                             @if ($choice)
                                 <div class="flex items-center justify-between gap-4 py-3">
                                     <label for="max_choices" class="font-semibold">Auswahl pro Person</label>
-                                    <input id="max_choices" name="max_choices" type="number" min="1" max="10" value="{{ $room->max_choices }}" class="field min-h-10 w-20 text-center text-base">
+                                    <input data-form-type="other" id="max_choices" name="max_choices" type="number" min="1" max="10" value="{{ $room->max_choices }}" class="field min-h-10 w-20 text-center text-base">
                                 </div>
                             @else
                                 <x-toggle name="one_at_a_time" :checked="$room->one_at_a_time" label="Einer nach dem anderen" />
@@ -302,10 +302,10 @@
                 <section class="panel p-5">
                     <h2 class="text-xl">Einstellungen</h2>
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.update', $room) }}" class="mt-3 space-y-4">
-                        @csrf @method('PATCH')
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="PATCH" data-form-type="other">
                         <div>
                             <label for="room-name" class="mb-1.5 block text-sm font-semibold">Name</label>
-                            <input id="room-name" name="name" value="{{ $room->name }}" maxlength="80" class="field min-h-10 text-base" required>
+                            <input data-form-type="other" id="room-name" name="name" value="{{ $room->name }}" maxlength="80" class="field min-h-10 text-base" required>
                         </div>
                         <fieldset>
                             <legend class="mb-1.5 text-sm font-semibold">Aussehen für alle</legend>
@@ -319,7 +319,7 @@
                         <div class="mt-2 flex gap-2">
                             <button type="button" @click="copy()" class="btn btn-quiet btn-sm" x-text="copied ? 'Kopiert' : 'Kopieren'">Kopieren</button>
                             <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.token', $room) }}" data-confirm="Neuen Admin-Link erzeugen? Der alte funktioniert dann nicht mehr." data-confirm-action="Neuen Link erzeugen">
-                                @csrf
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                                 <button class="btn btn-quiet btn-sm">Neuen erzeugen</button>
                             </form>
                         </div>
@@ -328,7 +328,7 @@
                         <p class="mt-4 text-sm text-muted">Ohne weitere Aktivität wird der Raum am {{ $room->pruneDate()->translatedFormat('j. F Y') }} automatisch gelöscht.</p>
                     @endif
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.destroy', $room) }}" class="mt-4 border-t border-line pt-4" data-confirm="{{ 'Raum „'.($room->name).'“ mit allen Bewertungen und Fotos endgültig löschen?' }}" data-confirm-action="Raum löschen" data-confirm-danger>
-                        @csrf @method('DELETE')
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                         <button class="text-sm font-semibold text-live">Raum löschen</button>
                     </form>
                 </section>

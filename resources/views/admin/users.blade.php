@@ -23,13 +23,13 @@
                             <span class="shrink-0 text-sm font-semibold text-muted group-open:hidden">Bearbeiten</span>
                         </summary>
                         <form novalidate data-form-type="other" method="POST" action="{{ route('admin.users.update', $u) }}" class="mt-4 grid gap-3 sm:grid-cols-2">
-                            @csrf @method('PUT')
-                            <input name="name" value="{{ $u->name }}" maxlength="60" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="Name">
-                            <input name="email" type="email" value="{{ $u->email }}" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="E-Mail">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="PUT" data-form-type="other">
+                            <input data-form-type="other" name="name" value="{{ $u->name }}" maxlength="60" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="Name">
+                            <input data-form-type="other" name="email" type="email" value="{{ $u->email }}" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="E-Mail">
                             <input name="password" type="password" autocomplete="new-password" data-form-type="other" placeholder="Neues Passwort (leer lassen = unverändert)" class="field min-h-10 text-base sm:col-span-2">
                             @unless ($u->is(auth()->user()))
                                 <label class="flex items-center gap-2 text-sm sm:col-span-2">
-                                    <input type="checkbox" name="is_admin" value="1" @checked($u->is_admin) class="size-4 accent-[var(--glow)]">
+                                    <input data-form-type="other" type="checkbox" name="is_admin" value="1" @checked($u->is_admin) class="size-4 accent-[var(--glow)]">
                                     Super-Admin
                                 </label>
                             @endunless
@@ -39,7 +39,7 @@
                         </form>
                         @unless ($u->is(auth()->user()))
                             <form novalidate data-form-type="other" method="POST" action="{{ route('admin.users.destroy', $u) }}" class="mt-3" data-confirm="{{ 'Konto von '.$u->name.' löschen?' }}" data-confirm-action="Konto löschen" data-confirm-danger>
-                                @csrf @method('DELETE')
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                                 <button class="text-sm font-semibold text-live">Konto löschen</button>
                             </form>
                         @endunless
@@ -51,12 +51,12 @@
         <section class="panel h-fit p-5">
             <h2 class="text-xl">Neues Konto</h2>
             <form novalidate data-form-type="other" method="POST" action="{{ route('admin.users.store') }}" class="mt-4 space-y-3">
-                @csrf
+                <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
                 <input name="name" value="{{ old('name') }}" placeholder="Name" maxlength="60" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required>
                 <input name="email" type="email" value="{{ old('email') }}" placeholder="E-Mail" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required>
                 <input name="password" type="password" autocomplete="new-password" data-form-type="other" placeholder="Passwort (mind. 8 Zeichen)" class="field min-h-10 text-base" required>
                 <label class="flex items-center gap-2 text-sm">
-                    <input type="checkbox" name="is_admin" value="1" class="size-4 accent-[var(--glow)]">
+                    <input data-form-type="other" type="checkbox" name="is_admin" value="1" class="size-4 accent-[var(--glow)]">
                     Super-Admin
                 </label>
                 <button class="btn btn-primary btn-sm">Konto anlegen</button>

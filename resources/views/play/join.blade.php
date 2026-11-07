@@ -9,17 +9,17 @@
         </div>
     @else
         <form novalidate data-form-type="other" method="POST" action="{{ route('play.join', $room) }}" class="panel mt-8 space-y-5 p-5">
-            @csrf
+            <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
             <x-errors />
             <div>
                 <label for="name" class="mb-1.5 block font-semibold">Wie heißt du?</label>
-                <input id="name" name="name" @error('name') aria-invalid="true" @enderror value="{{ old('name') }}" maxlength="40" autocomplete="given-name" class="field" required autofocus>
+                <input data-form-type="other" id="name" name="name" @error('name') aria-invalid="true" @enderror value="{{ old('name') }}" maxlength="40" autocomplete="given-name" class="field" required autofocus>
                 <p class="mt-1.5 text-sm text-muted">Die anderen sehen nur, dass du dabei bist, nie wie du abgestimmt hast.</p>
             </div>
             @if ($room->exclude_own)
             <div>
                 <label for="station_id" class="mb-1.5 block font-semibold">Gehörst du selbst zu einem Eintrag?</label>
-                <select id="station_id" name="station_id" @error('station_id') aria-invalid="true" @enderror class="field">
+                <select data-form-type="other" id="station_id" name="station_id" @error('station_id') aria-invalid="true" @enderror class="field">
                     <option value="">Nein</option>
                     @foreach ($room->stations as $station)
                         <option value="{{ $station->id }}" @selected(old('station_id') == $station->id)>{{ $station->name }}</option>
