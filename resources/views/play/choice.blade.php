@@ -14,7 +14,7 @@
                 @endif
             </p>
 
-            <form data-form-type="other" method="POST" action="{{ route('play.choose', $room) }}" class="mt-6"
+            <form novalidate data-form-type="other" method="POST" action="{{ route('play.choose', $room) }}" class="mt-6"
                 x-data="{ picked: @js(array_map('intval', old('options', $picked))), max: {{ $room->max_choices }},
                     toggle(id) {
                         if (this.max === 1) { this.picked = [id]; return; }
@@ -90,7 +90,7 @@
             @if ($room->photos_enabled)
                 <a href="{{ route('play.gallery', $room) }}" class="font-semibold underline decoration-line underline-offset-4 hover:decoration-glow">Fotos ansehen und hinzufügen</a>
             @endif
-            <form data-form-type="other" method="POST" action="{{ route('play.leave', $room) }}" onsubmit="return confirm('Wirklich austreten? Deine bisherige Stimme bleibt anonym erhalten.')">
+            <form novalidate data-form-type="other" method="POST" action="{{ route('play.leave', $room) }}" data-confirm="Wirklich austreten? Deine bisherige Stimme bleibt anonym erhalten." data-confirm-action="Austreten" data-confirm-danger>
                 @csrf
                 <button class="text-muted underline decoration-line underline-offset-4">Nicht {{ $participant->name }}? Austreten</button>
             </form>

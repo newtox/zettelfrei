@@ -25,7 +25,7 @@
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('admin.rooms') }}" class="rounded-full px-3 py-2 hover:bg-raised">Admin</a>
                 @endif
-                <form data-form-type="other" method="POST" action="{{ route('logout') }}">
+                <form novalidate data-form-type="other" method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="rounded-full px-3 py-2 text-muted hover:bg-raised">Abmelden</button>
                 </form>
@@ -43,6 +43,16 @@
 
         {{ $slot }}
     </main>
+
+    <dialog id="confirm-dialog" class="m-auto w-[min(26rem,calc(100vw-2.5rem))] rounded-3xl bg-surface p-6 text-ink shadow-2xl ring-1 ring-line backdrop:bg-black/60 backdrop:backdrop-blur-[2px]">
+        <form method="dialog">
+            <p data-confirm-text class="text-lg font-semibold leading-snug"></p>
+            <div class="mt-6 flex flex-wrap justify-end gap-2">
+                <button value="cancel" class="btn btn-quiet">Abbrechen</button>
+                <button value="ok" data-confirm-ok class="btn btn-primary"></button>
+            </div>
+        </form>
+    </dialog>
 
     @if ($room)
         <footer class="mx-auto flex flex-wrap items-center gap-x-3 gap-y-2 px-5 pb-8 text-sm text-muted {{ $wide ? 'max-w-6xl' : 'max-w-xl' }}" x-data="themePicker('{{ $room->code }}', '{{ $room->theme }}')">

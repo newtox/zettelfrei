@@ -101,7 +101,8 @@ class PlayController extends Controller
             'name' => ['required', 'string', 'min:2', 'max:40', Rule::unique('participants')->where('room_id', $room->id)],
             'station_id' => ['nullable', 'integer', Rule::exists('stations', 'id')->where('room_id', $room->id)],
         ], [
-            'name.required' => 'Wie heißt du?',
+            'name.required' => 'Trag deinen Namen ein, dann geht’s los.',
+            'name.min' => 'Dein Name braucht mindestens 2 Zeichen.',
             'name.unique' => 'Diesen Namen gibt es in diesem Raum schon. Nimm z. B. noch den Anfangsbuchstaben deines Nachnamens dazu.',
         ]);
 

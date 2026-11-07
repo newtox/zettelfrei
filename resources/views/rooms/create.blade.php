@@ -19,7 +19,7 @@
     <h1 class="text-3xl">Neuer Raum</h1>
     <p class="mt-2 text-muted">Alles außer der Abstimmungsart lässt sich später noch ändern.</p>
 
-    <form data-form-type="other" method="POST" action="{{ route('rooms.store') }}" class="mt-6 space-y-5"
+    <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.store') }}" class="mt-6 space-y-5"
         x-data="{
             ...@js($initial),
             templates: @js($templates),
@@ -53,7 +53,7 @@
         <section class="panel space-y-4 p-5">
             <div>
                 <label for="name" class="mb-1.5 block font-semibold">Name des Raums</label>
-                <input id="name" name="name" x-model="name" maxlength="80" class="field" required>
+                <input id="name" name="name" @error('name') aria-invalid="true" @enderror x-model="name" maxlength="80" class="field" required>
                 <p class="mt-1.5 text-sm text-muted" x-show="mode === 'choice'" x-cloak>Bei Umfragen am besten gleich als Frage, die steht dann groß über der Abstimmung.</p>
             </div>
             <fieldset>
@@ -77,7 +77,7 @@
             </div>
             <div x-show="mode === 'choice'" x-cloak class="mt-4 flex items-center justify-between gap-4">
                 <label for="max_choices" class="font-semibold">Wie viele darf jeder auswählen?</label>
-                <input id="max_choices" name="max_choices" type="number" min="1" max="10" x-model.number="max_choices" class="field w-20 text-center">
+                <input id="max_choices" name="max_choices" @error('max_choices') aria-invalid="true" @enderror type="number" min="1" max="10" x-model.number="max_choices" class="field w-20 text-center">
             </div>
         </section>
 
@@ -88,16 +88,16 @@
             <div class="mt-1.5 grid grid-cols-2 gap-2">
                 <div>
                     <label for="item_label" class="mb-1 block text-sm text-muted">Einzahl</label>
-                    <input id="item_label" name="item_label" x-model="item_label" maxlength="30" class="field" required>
+                    <input id="item_label" name="item_label" @error('item_label') aria-invalid="true" @enderror x-model="item_label" maxlength="30" class="field" required>
                 </div>
                 <div>
                     <label for="items_label" class="mb-1 block text-sm text-muted">Mehrzahl</label>
-                    <input id="items_label" name="items_label" x-model="items_label" maxlength="30" class="field" required>
+                    <input id="items_label" name="items_label" @error('items_label') aria-invalid="true" @enderror x-model="items_label" maxlength="30" class="field" required>
                 </div>
             </div>
             <p class="mt-4 font-semibold" x-text="items_label || 'Einträge'"></p>
             <p class="text-sm text-muted" x-show="mode === 'score' && one_at_a_time">In der Reihenfolge, in der ihr sie besucht.</p>
-            <x-list-editor class="mt-3" x-effect="placeholder = 'z. B. ' + (item_label || 'Eintrag') + ' …'" name="stations" :items="old('stations', ['', ''])" placeholder="" add-label="Weitere hinzufügen" />
+            <x-list-editor class="mt-3" x-effect="placeholder = 'z. B. ' + (item_label || 'Eintrag') + ' …'" name="stations" :items="old('stations') ?: ['', '']" placeholder="" add-label="Weitere hinzufügen" />
         </section>
 
         <section class="panel p-5" x-show="mode === 'score'">

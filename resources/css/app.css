@@ -150,6 +150,9 @@ h3,
     border: 1.5px solid var(--line);
     font-size: 1.05rem;
 }
+.field[aria-invalid='true'] {
+    border-color: var(--live);
+}
 .field:focus {
     outline: none;
     border-color: var(--glow);

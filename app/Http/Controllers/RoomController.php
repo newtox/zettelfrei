@@ -161,7 +161,7 @@ class RoomController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:60', Rule::unique('stations')->where('room_id', $room->id)],
-        ], ['name.unique' => 'Diesen Eintrag gibt es schon.']);
+        ], ['name.unique' => 'Diesen Eintrag gibt es schon.', 'name.required' => 'Trag einen Namen für den neuen Eintrag ein.']);
 
         $room->stations()->create([
             'name' => trim($data['name']),
@@ -178,7 +178,7 @@ class RoomController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:60', Rule::unique('stations')->where('room_id', $room->id)->ignore($station->id)],
-        ], ['name.unique' => 'Diesen Eintrag gibt es schon.']);
+        ], ['name.unique' => 'Diesen Eintrag gibt es schon.', 'name.required' => 'Der Eintrag braucht einen Namen.']);
 
         $station->update(['name' => trim($data['name'])]);
 
@@ -269,7 +269,7 @@ class RoomController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:60', Rule::unique('criteria')->where('room_id', $room->id)],
-        ], ['name.unique' => 'Dieses Kriterium gibt es schon.']);
+        ], ['name.unique' => 'Dieses Kriterium gibt es schon.', 'name.required' => 'Trag einen Namen für das neue Kriterium ein.']);
 
         $room->criteria()->create([
             'name' => trim($data['name']),
@@ -385,6 +385,7 @@ class RoomController extends Controller
             'criteria.*.distinct' => 'Das Kriterium „:input“ steht mehrfach in der Liste.',
             'stations.*.distinct' => '„:input“ steht mehrfach in der Liste.',
             'preset_name.required' => 'Gib der Vorlage einen Namen.',
+            'name.required' => 'Gib dem Raum einen Namen.',
             'item_label.required' => 'Wie heißt ein einzelner Eintrag?',
             'items_label.required' => 'Wie heißen mehrere Einträge?',
         ];

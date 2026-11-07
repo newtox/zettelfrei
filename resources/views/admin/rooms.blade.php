@@ -1,7 +1,7 @@
 <x-layouts.app title="Admin – Räume" wide>
     @include('admin.nav')
 
-    <form data-form-type="other" method="GET" class="mt-6 flex gap-2">
+    <form novalidate data-form-type="other" method="GET" class="mt-6 flex gap-2">
         <input name="q" value="{{ $search }}" placeholder="Name oder Code suchen" class="field max-w-sm">
         <button class="btn btn-quiet shrink-0">Suchen</button>
         @if ($search !== '')
@@ -54,11 +54,11 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex justify-end gap-1.5">
-                                    <form data-form-type="other" method="POST" action="{{ route('admin.rooms.keep', $r) }}">
+                                    <form novalidate data-form-type="other" method="POST" action="{{ route('admin.rooms.keep', $r) }}">
                                         @csrf
                                         <button class="btn btn-quiet btn-sm">{{ $r->keep ? 'Nicht mehr behalten' : 'Behalten' }}</button>
                                     </form>
-                                    <form data-form-type="other" method="POST" action="{{ route('admin.rooms.destroy', $r) }}" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Raum „'.$r->name.'“ mit allen Stimmen und Fotos endgültig löschen?') }})">
+                                    <form novalidate data-form-type="other" method="POST" action="{{ route('admin.rooms.destroy', $r) }}" data-confirm="{{ 'Raum „'.$r->name.'“ mit allen Stimmen und Fotos endgültig löschen?' }}" data-confirm-action="Raum löschen" data-confirm-danger>
                                         @csrf @method('DELETE')
                                         <button class="btn btn-sm text-live hover:bg-raised">Löschen</button>
                                     </form>

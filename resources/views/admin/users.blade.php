@@ -22,7 +22,7 @@
                             </div>
                             <span class="shrink-0 text-sm font-semibold text-muted group-open:hidden">Bearbeiten</span>
                         </summary>
-                        <form data-form-type="other" method="POST" action="{{ route('admin.users.update', $u) }}" class="mt-4 grid gap-3 sm:grid-cols-2">
+                        <form novalidate data-form-type="other" method="POST" action="{{ route('admin.users.update', $u) }}" class="mt-4 grid gap-3 sm:grid-cols-2">
                             @csrf @method('PUT')
                             <input name="name" value="{{ $u->name }}" maxlength="60" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="Name">
                             <input name="email" type="email" value="{{ $u->email }}" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required aria-label="E-Mail">
@@ -38,7 +38,7 @@
                             </div>
                         </form>
                         @unless ($u->is(auth()->user()))
-                            <form data-form-type="other" method="POST" action="{{ route('admin.users.destroy', $u) }}" class="mt-3" onsubmit="return confirm({{ \Illuminate\Support\Js::from('Konto von '.$u->name.' löschen?') }})">
+                            <form novalidate data-form-type="other" method="POST" action="{{ route('admin.users.destroy', $u) }}" class="mt-3" data-confirm="{{ 'Konto von '.$u->name.' löschen?' }}" data-confirm-action="Konto löschen" data-confirm-danger>
                                 @csrf @method('DELETE')
                                 <button class="text-sm font-semibold text-live">Konto löschen</button>
                             </form>
@@ -50,7 +50,7 @@
 
         <section class="panel h-fit p-5">
             <h2 class="text-xl">Neues Konto</h2>
-            <form data-form-type="other" method="POST" action="{{ route('admin.users.store') }}" class="mt-4 space-y-3">
+            <form novalidate data-form-type="other" method="POST" action="{{ route('admin.users.store') }}" class="mt-4 space-y-3">
                 @csrf
                 <input name="name" value="{{ old('name') }}" placeholder="Name" maxlength="60" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required>
                 <input name="email" type="email" value="{{ old('email') }}" placeholder="E-Mail" autocomplete="off" data-form-type="other" class="field min-h-10 text-base" required>

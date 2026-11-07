@@ -180,5 +180,38 @@ Alpine.data('themePicker', (roomCode, roomTheme) => ({
     },
 }));
 
+document.addEventListener(
+    'submit',
+    (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement) || !form.dataset.confirm) return;
+        if (form.dataset.confirmed === '1') {
+            delete form.dataset.confirmed;
+            return;
+        }
+        const dialog = document.getElementById('confirm-dialog');
+        if (!dialog?.showModal) return;
+        event.preventDefault();
+        const submitter = event.submitter;
+        dialog.querySelector('[data-confirm-text]').textContent = form.dataset.confirm;
+        const ok = dialog.querySelector('[data-confirm-ok]');
+        ok.textContent = form.dataset.confirmAction || 'Ja';
+        ok.className = 'btn ' + ('confirmDanger' in form.dataset ? 'btn-live' : 'btn-primary');
+        dialog.returnValue = '';
+        dialog.addEventListener(
+            'close',
+            () => {
+                if (dialog.returnValue !== 'ok') return;
+                form.dataset.confirmed = '1';
+                form.requestSubmit(submitter && form.contains(submitter) ? submitter : undefined);
+            },
+            { once: true },
+        );
+        dialog.showModal();
+        ok.focus();
+    },
+    true,
+);
+
 window.Alpine = Alpine;
 Alpine.start();

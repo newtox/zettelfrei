@@ -8,18 +8,18 @@
             <p class="mt-1 text-sm text-muted">Sag der Person, die den Raum erstellt hat, dass sie den Beitritt wieder freigeben soll.</p>
         </div>
     @else
-        <form data-form-type="other" method="POST" action="{{ route('play.join', $room) }}" class="panel mt-8 space-y-5 p-5">
+        <form novalidate data-form-type="other" method="POST" action="{{ route('play.join', $room) }}" class="panel mt-8 space-y-5 p-5">
             @csrf
             <x-errors />
             <div>
                 <label for="name" class="mb-1.5 block font-semibold">Wie heißt du?</label>
-                <input id="name" name="name" value="{{ old('name') }}" maxlength="40" autocomplete="given-name" class="field" required autofocus>
+                <input id="name" name="name" @error('name') aria-invalid="true" @enderror value="{{ old('name') }}" maxlength="40" autocomplete="given-name" class="field" required autofocus>
                 <p class="mt-1.5 text-sm text-muted">Die anderen sehen nur, dass du dabei bist, nie wie du abgestimmt hast.</p>
             </div>
             @if ($room->exclude_own)
             <div>
                 <label for="station_id" class="mb-1.5 block font-semibold">Gehörst du selbst zu einem Eintrag?</label>
-                <select id="station_id" name="station_id" class="field">
+                <select id="station_id" name="station_id" @error('station_id') aria-invalid="true" @enderror class="field">
                     <option value="">Nein</option>
                     @foreach ($room->stations as $station)
                         <option value="{{ $station->id }}" @selected(old('station_id') == $station->id)>{{ $station->name }}</option>
