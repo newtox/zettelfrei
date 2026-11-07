@@ -1,6 +1,6 @@
 <x-layouts.app>
     <section class="pt-6">
-        <h1 class="text-[2.6rem] leading-[1.05] sm:text-5xl">Jeder stimmt ab. Keiner sieht, wie.</h1>
+        <h1 class="text-[2.6rem] leading-[1.05] sm:text-5xl">Alle stimmen ab. Niemand sieht, wie.</h1>
         <p class="mt-4 max-w-md text-lg text-muted">Ob Wettbewerb, Bewertung oder Umfrage: Raum erstellen, Code teilen, alle stimmen auf dem Handy ab. Ganz ohne Zettel und Stift.</p>
     </section>
 
@@ -24,7 +24,7 @@
         </li>
         <li class="flex gap-4">
             <span class="font-display w-5 shrink-0 text-2xl text-glow">2</span>
-            <p><span class="font-semibold">Punkte vergeben oder Favoriten wählen.</span> <span class="text-muted">Komplett anonym, und Fotos kann jeder dazulegen.</span></p>
+            <p><span class="font-semibold">Punkte vergeben oder Favoriten wählen.</span> <span class="text-muted">Komplett anonym, und Fotos können alle dazulegen.</span></p>
         </li>
         <li class="flex gap-4">
             <span class="font-display w-5 shrink-0 text-2xl text-glow">3</span>

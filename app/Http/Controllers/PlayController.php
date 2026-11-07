@@ -88,7 +88,7 @@ class PlayController extends Controller
         }
 
         if ($room->join_locked) {
-            return back()->withErrors(['name' => 'Der Raum ist für neue Teilnehmer gesperrt.']);
+            return back()->withErrors(['name' => 'Der Raum nimmt gerade keine neuen Leute auf.']);
         }
 
         $request->merge(['name' => trim(preg_replace('/\s+/', ' ', (string) $request->input('name')))]);

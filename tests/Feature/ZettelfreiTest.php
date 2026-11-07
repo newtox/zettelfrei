@@ -755,4 +755,43 @@ class ZettelfreiTest extends TestCase
         $this->as($room, $token)->post(route('play.vote', [$room, $first]), $this->scores($room, [3, 9]))->assertSessionHasNoErrors();
         $this->assertEqualsCanonicalizing([3, 9], Ballot::first()->ratings->pluck('score')->all());
     }
+
+    public function test_super_admin_creates_demo_rooms(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs(User::factory()->create())->post(route('admin.demo'), ['template' => 'trees', 'state' => 'ready'])->assertForbidden();
+
+        foreach (['trees', 'contest', 'poll'] as $template) {
+            foreach (['running', 'ready'] as $state) {
+                $response = $this->actingAs($admin)->post(route('admin.demo'), ['template' => $template, 'state' => $state]);
+                $room = Room::latest('id')->first();
+                $response->assertRedirect(route('rooms.manage', $room));
+
+                $this->assertStringStartsWith('Demo:', $room->name);
+                $this->assertSame(8, $room->participants()->count());
+                $this->assertSame(5, $room->stations()->count());
+
+                if ($room->isChoice()) {
+                    $this->assertSame($state === 'running' ? 5 : 8, $room->voterCount());
+                    $this->assertSame($state === 'running', $room->voting_open);
+                } else {
+                    $this->assertGreaterThan(0, $room->criteria()->count());
+                    $this->assertGreaterThan(0, Ballot::whereIn('station_id', $room->stations()->select('id'))->count());
+                    $open = $room->stations()->where('status', 'open')->count();
+                    $this->assertSame($state === 'ready' ? 0 : ($room->one_at_a_time ? 1 : 5), $open);
+                }
+
+                if ($state === 'ready') {
+                    $this->actingAs($admin)->post(route('rooms.reveal', $room), ['action' => 'all']);
+                    $this->actingAs($admin)->get(route('play.results', $room))->assertOk()->assertSee('Das Ergebnis');
+                }
+            }
+        }
+
+        $trees = Room::where('name', 'Demo: Baumbewertung')->latest('id')->first();
+        foreach ($trees->stations as $station) {
+            $this->assertSame($station->eligibleVoterCount(), $station->ballots()->count());
+        }
+    }
 }

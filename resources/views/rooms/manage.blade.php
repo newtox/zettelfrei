@@ -197,7 +197,7 @@
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.update', $room) }}" class="mt-4">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="PATCH" data-form-type="other">
                         <input data-form-type="other" type="hidden" name="join_locked" value="{{ $room->join_locked ? 0 : 1 }}">
-                        <button class="text-sm text-muted underline underline-offset-4 hover:text-ink">{{ $room->join_locked ? 'Beitritt wieder erlauben' : 'Keine neuen Teilnehmer mehr zulassen' }}</button>
+                        <button class="text-sm text-muted underline underline-offset-4 hover:text-ink">{{ $room->join_locked ? 'Beitritt wieder erlauben' : 'Keine neuen Leute mehr zulassen' }}</button>
                     </form>
 
                     <div x-show="big" x-cloak x-transition.opacity class="fixed inset-0 z-50 grid place-items-center bg-black/80 p-6" @click="big = false" @keydown.escape.window="big = false">
@@ -212,7 +212,7 @@
                 <section class="panel p-5">
                     <h2 class="text-xl">Dabei</h2>
                     @if ($room->participants->isEmpty())
-                        <p class="mt-2 text-sm text-muted">Noch niemand. Sobald jemand den QR-Code scannt und seinen Namen eingibt, steht er hier.</p>
+                        <p class="mt-2 text-sm text-muted">Noch niemand. Sobald jemand den QR-Code scannt und einen Namen eingibt, erscheint er hier.</p>
                     @else
                         <ul class="mt-3 divide-y divide-line">
                             @foreach ($room->participants as $p)

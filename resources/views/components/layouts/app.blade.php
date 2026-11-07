@@ -25,7 +25,7 @@
     <meta property="og:image" content="{{ asset('og-image.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="{{ config('app.name') }}: Jeder stimmt ab. Keiner sieht, wie.">
+    <meta property="og:image:alt" content="{{ config('app.name') }}: Alle stimmen ab. Niemand sieht, wie.">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $pageTitle }}">
     <meta name="twitter:description" content="{{ $description }}">

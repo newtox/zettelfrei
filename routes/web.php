@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('admin')->prefix('/admin')->name('admin.')->group(function () {
         Route::get('/', [AdminController::class, 'rooms'])->name('rooms');
+        Route::post('/demo', [AdminController::class, 'createDemo'])->name('demo');
         Route::post('/raeume/{room}/behalten', [AdminController::class, 'keepRoom'])->name('rooms.keep');
         Route::delete('/raeume/{room}', [AdminController::class, 'destroyRoom'])->name('rooms.destroy');
         Route::get('/einstellungen', [AdminController::class, 'settings'])->name('settings');

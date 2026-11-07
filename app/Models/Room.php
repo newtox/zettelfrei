@@ -70,8 +70,8 @@ class Room extends Model
         ],
         'poll' => [
             'label' => 'Umfrage',
-            'hint' => 'Jeder wählt eine Option, z. B. wohin es zum Essen geht',
-            'items_hint' => 'Die Antworten, aus denen jeder auswählt.',
+            'hint' => 'Alle wählen eine Option, z. B. wohin es zum Essen geht',
+            'items_hint' => 'Die Antworten, aus denen alle auswählen.',
             'name' => 'Wohin gehen wir?',
             'mode' => self::CHOICE,
             'item_label' => 'Option',

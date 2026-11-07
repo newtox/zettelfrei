@@ -1,6 +1,30 @@
 <x-layouts.app title="Admin – Räume" wide>
     @include('admin.nav')
 
+    <section class="panel mt-6 p-5">
+        <h2 class="text-xl">Demo-Raum erstellen</h2>
+        <p class="mt-1 text-sm text-muted">Ein Raum mit ausgedachten Einträgen, acht Personen und ihren Stimmen, um Zettelfrei vorzuführen.</p>
+        <form novalidate data-form-type="other" method="POST" action="{{ route('admin.demo') }}" class="mt-4 flex flex-wrap items-end gap-3">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+            <div>
+                <label for="demo-template" class="mb-1 block text-sm font-semibold">Vorlage</label>
+                <select data-form-type="other" id="demo-template" name="template" class="field min-h-10 w-auto text-base">
+                    @foreach (\App\Models\Room::TEMPLATES as $key => $t)
+                        <option value="{{ $key }}">{{ $t['label'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label for="demo-state" class="mb-1 block text-sm font-semibold">Stand</label>
+                <select data-form-type="other" id="demo-state" name="state" class="field min-h-10 w-auto text-base">
+                    <option value="{{ \App\Support\DemoRoom::RUNNING }}">Abstimmung läuft, selbst mitmachen</option>
+                    <option value="{{ \App\Support\DemoRoom::READY }}">Alle haben abgestimmt, bereit zur Auflösung</option>
+                </select>
+            </div>
+            <button class="btn btn-primary">Demo erstellen</button>
+        </form>
+    </section>
+
     <form novalidate data-form-type="other" method="GET" class="mt-6 flex gap-2">
         <input data-form-type="other" name="q" value="{{ $search }}" placeholder="Name oder Code suchen" class="field max-w-sm">
         <button class="btn btn-quiet shrink-0">Suchen</button>

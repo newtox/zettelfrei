@@ -75,13 +75,13 @@
                         <input data-form-type="other" type="radio" name="mode" value="{{ $key }}" x-model="mode" class="peer sr-only">
                         <span class="block h-full rounded-2xl p-3.5 ring-1 ring-line ring-inset peer-checked:ring-2 peer-checked:ring-glow peer-focus-visible:outline-3 peer-focus-visible:outline-glow">
                             <span class="block font-semibold">{{ $label }}</span>
-                            <span class="mt-0.5 block text-sm text-muted">{{ $key === 'score' ? 'Jeder gibt 1 bis 10 Punkte pro Kriterium' : 'Jeder wählt seine Favoriten aus' }}</span>
+                            <span class="mt-0.5 block text-sm text-muted">{{ $key === 'score' ? 'Alle geben 1 bis 10 Punkte pro Kriterium' : 'Alle wählen ihre Favoriten aus' }}</span>
                         </span>
                     </label>
                 @endforeach
             </div>
             <div x-show="mode === 'choice'" x-cloak class="mt-4 flex items-center justify-between gap-4">
-                <label for="max_choices" class="font-semibold">Wie viele darf jeder auswählen?</label>
+                <label for="max_choices" class="font-semibold">Wie viele darf man auswählen?</label>
                 <input data-form-type="other" id="max_choices" name="max_choices" @error('max_choices') aria-invalid="true" @enderror type="number" min="1" max="10" x-model.number="max_choices" class="field w-20 text-center">
             </div>
         </section>
@@ -134,7 +134,7 @@
         </section>
 
         <section class="panel divide-y divide-line px-5 py-2">
-            <x-toggle name="exclude_own" model="exclude_own" :checked="$initial['exclude_own']" label="Eigenen Eintrag ausschließen" hint="Beim Beitritt gibt jeder an, ob er selbst zu einem Eintrag gehört, und stimmt dafür nicht mit ab." />
+            <x-toggle name="exclude_own" model="exclude_own" :checked="$initial['exclude_own']" label="Eigenen Eintrag ausschließen" hint="Beim Beitritt geben alle an, ob sie selbst zu einem Eintrag gehören, und stimmen dafür nicht mit ab." />
             <x-toggle name="photos_enabled" model="photos_enabled" :checked="$initial['photos_enabled']" label="Fotos erlauben" hint="Alle im Raum können Fotos zu jedem Eintrag hochladen." />
             <div x-show="mode === 'score'">
                 <x-toggle name="one_at_a_time" model="one_at_a_time" :checked="$initial['one_at_a_time']" label="Einer nach dem anderen" hint="Du gibst immer nur einen Eintrag frei, wie bei einem Rundgang. Aus: alle sind gleichzeitig bewertbar." />

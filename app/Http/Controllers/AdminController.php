@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Setting;
+use App\Support\DemoRoom;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,6 +33,18 @@ class AdminController extends Controller
             'search' => $search,
             'retention' => Room::retentionDays(),
         ]);
+    }
+
+    public function createDemo(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'template' => ['required', Rule::in(array_keys(Room::TEMPLATES))],
+            'state' => ['required', Rule::in([DemoRoom::RUNNING, DemoRoom::READY])],
+        ]);
+
+        $room = DemoRoom::create($request->user(), $data['template'], $data['state']);
+
+        return redirect()->route('rooms.manage', $room)->with('status', 'Demo-Raum erstellt. Personen und Stimmen sind ausgedacht, du kannst über den QR-Code selbst mitmachen.');
     }
 
     public function keepRoom(Room $room): RedirectResponse
@@ -118,6 +131,6 @@ class AdminController extends Controller
 
         $user->delete();
 
-        return back()->with('status', 'Konto von '.$user->name.' gelöscht. Seine Räume bleiben erhalten und sind weiter über ihren Admin-Link erreichbar.');
+        return back()->with('status', 'Konto von '.$user->name.' gelöscht. Die Räume aus diesem Konto bleiben erhalten und sind weiter über ihren Admin-Link erreichbar.');
     }
 }

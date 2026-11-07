@@ -305,7 +305,7 @@ class RoomController extends Controller
 
         $room->participants()->whereKey($participant)->firstOrFail()->delete();
 
-        return back()->with('status', 'Teilnehmer entfernt. Bereits abgegebene Bewertungen bleiben anonym erhalten.');
+        return back()->with('status', 'Aus dem Raum entfernt. Bereits abgegebene Stimmen bleiben anonym erhalten.');
     }
 
     public function reveal(Request $request, Room $room): RedirectResponse

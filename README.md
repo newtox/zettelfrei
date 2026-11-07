@@ -17,7 +17,7 @@ The interface is in German.
 - **No account needed to create a room:** the creator is recognised as room admin via cookie and gets a secret admin link for other devices. The link can be regenerated at any time, which invalidates the old one
 - **No account needed to join** via link, QR code or 6-character code, just a name
 - **Optional accounts:** login only, no public registration. Accounts get personal criteria presets and "Meine Räume" across devices
-- **Super admin area** at `/admin`: all rooms with creator, last activity and deletion date; open, delete or keep any room; create, edit and delete accounts; site theme
+- **Super admin area** at `/admin`: all rooms with creator, last activity and deletion date; open, delete or keep any room; create, edit and delete accounts; site theme; demo rooms with made-up participants and votes for showing Zettelfrei off
 - **Automatic cleanup:** rooms without activity are deleted together with their photos after `ROOM_RETENTION_DAYS` days (default 90), unless marked as kept
 - **Anonymous ballots:** a ballot only stores an HMAC of the secret device token and the entry or room, never the participant ID. Votes cannot be traced back to a person, not even in the database
 - **Change your vote** while voting is open
