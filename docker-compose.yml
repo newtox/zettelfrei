@@ -4,7 +4,7 @@ services:
     container_name: zettelfrei
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8090:80"
+      - "127.0.0.1:8095:80"
     environment:
       APP_KEY: "base64:HIER_DEN_KEY_EINTRAGEN"
       APP_URL: "https://abstimmen.newtox.de"
