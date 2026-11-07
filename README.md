@@ -95,6 +95,14 @@ docker exec -it -u www-data zettelfrei php artisan user:create someone@example.c
 | `MAX_PHOTO_KB` | `12288` | Maximum upload size per photo |
 | `SESSION_SECURE_COOKIE` | – | Set to `true` behind HTTPS |
 
+## License
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)** License.
+
+- **License**: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+By contributing, you agree that your contributions will be licensed under the same license.
+
 ## Contact
 
 justin.lys26@gmail.com
