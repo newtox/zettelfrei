@@ -24,6 +24,8 @@ class PhotoController extends Controller
 
         abort_unless($participant || $isOwner, 403);
         abort_unless($room->photos_enabled, 403, 'Fotos sind in diesem Raum ausgeschaltet.');
+        abort_unless($room->canUploadPhoto($participant, $station, $isOwner), 403, 'Fotos kann hier nur hochladen, wer zu diesem Eintrag gehört.');
+        abort_if($station->photos()->count() >= Room::maxPhotosPerEntry(), 422, 'Zu diesem Eintrag gibt es schon '.Room::maxPhotosPerEntry().' Fotos.');
 
         $request->validate([
             'photo' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:'.config('zettelfrei.max_photo_kb')],

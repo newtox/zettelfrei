@@ -3,15 +3,30 @@
     $id = $criterion->id;
     $group = 'rating_'.$id;
     $label = fn ($n) => $n.' '.($n === 1 ? 'Punkt' : 'Punkte').' für '.$criterion->name;
+    $grades = $style === 'grades';
+    $shownCurrent = $current ? ($grades ? 7 - (int) $current : $current) : '–';
 @endphp
 <fieldset class="panel px-4 pb-4 pt-3.5" x-data="rating({{ (int) $current }})">
     <div class="flex items-baseline justify-between gap-3">
         <legend class="text-lg font-semibold">{{ $criterion->name }}</legend>
-        <span class="font-display text-3xl tabular-nums" :class="value ? 'text-glow' : 'text-muted'" x-text="value || '–'">{{ $current ?: '–' }}</span>
+        <span class="font-display text-3xl tabular-nums" :class="value ? 'text-glow' : 'text-muted'" x-text="value ? {{ $grades ? '7 - value' : 'value' }} : '–'">{{ $shownCurrent }}</span>
     </div>
     <input type="hidden" name="scores[{{ $id }}]" :value="value || ''" value="{{ $current ?: '' }}" data-score data-form-type="other">
 
     @switch($style)
+        @case('grades')
+            <div class="mt-3 grid grid-cols-6 gap-2">
+                @for ($g = 1; $g <= 6; $g++)
+                    @php($n = 7 - $g)
+                    <label class="cursor-pointer">
+                        <input type="radio" name="{{ $group }}" value="{{ $n }}" class="peer sr-only" @checked((int) $current === $n) @change="pick({{ $n }})" aria-label="Note {{ $g }} für {{ $criterion->name }}" data-form-type="other">
+                        <span class="grid aspect-square place-items-center rounded-full bg-bulb-off font-display text-2xl tabular-nums text-muted transition-colors peer-checked:bg-glow peer-checked:text-glow-ink peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink">{{ $g }}</span>
+                    </label>
+                @endfor
+            </div>
+            <div class="mt-1.5 flex justify-between text-xs text-muted" aria-hidden="true"><span>sehr gut</span><span>ungenügend</span></div>
+            @break
+
         @case('numbers')
             <div class="mt-3 grid grid-cols-5 gap-2 sm:grid-cols-10">
                 @for ($n = 1; $n <= 10; $n++)

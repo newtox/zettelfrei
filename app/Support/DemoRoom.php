@@ -22,7 +22,7 @@ class DemoRoom
     private const DATA = [
         'trees' => [
             'name' => 'Demo: Baumbewertung',
-            'entries' => ['Familie Müller', 'Familie Schmidt', 'Oma & Opa', 'Familie Weber', 'Tante Gabi'],
+            'entries' => ['Familie Müller', 'Oma & Opa', 'Lena', 'Familie Weber', 'Tante Gabi'],
             'preset' => 'Weihnachtsbaum',
             'members' => ['Anna' => 0, 'Ben' => 0, 'Clara' => 1, 'David' => 1, 'Emma' => 3, 'Felix' => 3, 'Greta' => 4],
         ],
@@ -54,6 +54,8 @@ class DemoRoom
                 'item_label' => $settings['item_label'],
                 'items_label' => $settings['items_label'],
                 'exclude_own' => $settings['exclude_own'],
+                'own_question' => $settings['own_question'],
+                'own_none_label' => $settings['own_none_label'],
                 'photos_enabled' => $settings['photos_enabled'],
                 'one_at_a_time' => $settings['one_at_a_time'],
                 'max_choices' => $settings['max_choices'],

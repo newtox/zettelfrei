@@ -794,4 +794,122 @@ class ZettelfreiTest extends TestCase
             $this->assertSame($station->eligibleVoterCount(), $station->ballots()->count());
         }
     }
+
+    public function test_room_reset_clears_votes_and_optionally_keeps_people_and_photos(): void
+    {
+        Storage::fake('local');
+
+        $room = $this->makeRoom();
+        [$mueller, $schmidt] = [$room->stations[0], $room->stations[1]];
+        $token = $this->join($room, 'Oma', $schmidt);
+        $this->open($room, $mueller);
+        $this->as($room, $token)->post(route('play.vote', [$room, $mueller]), $this->scores($room, [7, 9]))->assertRedirect();
+        $this->as($room, $token)->post(route('photos.store', [$room, $mueller]), ['photo' => UploadedFile::fake()->image('a.jpg')], ['Accept' => 'application/json'])->assertCreated();
+        $this->actingAs($room->owner)->post(route('rooms.reveal', $room), ['action' => 'next'])->assertRedirect();
+
+        $this->actingAs($room->owner)->post(route('rooms.reset', $room), ['keep_participants' => '1', 'keep_photos' => '1'])->assertRedirect(route('rooms.manage', $room));
+
+        $room->refresh();
+        $this->assertFalse($room->hasBallots());
+        $this->assertSame(0, $room->reveal_step);
+        $this->assertSame(['pending'], $room->stations()->pluck('status')->unique()->values()->all());
+        $this->assertSame(1, $room->participants()->count());
+        $this->assertSame(1, $room->photos()->count());
+
+        $path = $room->photos()->first()->path;
+        $this->actingAs($room->owner)->post(route('rooms.reset', $room))->assertRedirect();
+
+        $this->assertSame(0, $room->participants()->count());
+        $this->assertSame(0, $room->photos()->count());
+        Storage::disk('local')->assertMissing($path);
+        $this->assertSame(3, $room->stations()->count());
+        $this->assertSame(2, $room->criteria()->count());
+    }
+
+    public function test_only_room_managers_can_reset(): void
+    {
+        $room = $this->makeRoom();
+
+        $this->anonymous()->post(route('rooms.reset', $room))->assertForbidden();
+        $this->actingAs(User::factory()->create())->post(route('rooms.reset', $room))->assertForbidden();
+    }
+
+    public function test_join_question_is_configurable(): void
+    {
+        $room = $this->makeRoom(null, ['own_question' => 'Zu welcher Familie gehörst du?', 'own_none_label' => 'Zu keiner davon']);
+
+        $this->anonymous()->get(route('play.show', $room))->assertOk()
+            ->assertSee('Zu welcher Familie gehörst du?')
+            ->assertSee('Zu keiner davon')
+            ->assertDontSee('Gehörst du selbst zu einem Eintrag?');
+
+        $this->actingAs($room->owner)->patch(route('rooms.settings', $room), [
+            'item_label' => 'Familie', 'items_label' => 'Familien', 'exclude_own' => '1',
+            'own_question' => '', 'own_none_label' => '',
+        ])->assertSessionHasNoErrors();
+        auth()->logout();
+
+        $this->anonymous()->get(route('play.show', $room))->assertSee('Gehörst du selbst zu einem Eintrag?');
+    }
+
+    public function test_photos_are_limited_per_entry(): void
+    {
+        Storage::fake('local');
+
+        $room = $this->makeRoom();
+        $station = $room->stations[0];
+        $token = $this->join($room, 'Knipser');
+
+        foreach (range(1, 3) as $i) {
+            $this->as($room, $token)->post(route('photos.store', [$room, $station]), ['photo' => UploadedFile::fake()->image("$i.jpg")], ['Accept' => 'application/json'])->assertCreated();
+        }
+
+        $this->as($room, $token)->post(route('photos.store', [$room, $station]), ['photo' => UploadedFile::fake()->image('4.jpg')], ['Accept' => 'application/json'])->assertStatus(422);
+        $this->assertSame(3, $station->photos()->count());
+    }
+
+    public function test_photos_can_be_limited_to_own_entry(): void
+    {
+        Storage::fake('local');
+
+        $room = $this->makeRoom(null, ['photos_own_only' => '1']);
+        [$mueller, $schmidt] = [$room->stations[0], $room->stations[1]];
+        $own = $this->join($room, 'Müller-Oma', $mueller);
+        $none = $this->join($room, 'Gast');
+        $photo = fn () => ['photo' => UploadedFile::fake()->image('a.jpg')];
+
+        $this->as($room, $own)->post(route('photos.store', [$room, $mueller]), $photo(), ['Accept' => 'application/json'])->assertCreated();
+        $this->as($room, $own)->post(route('photos.store', [$room, $schmidt]), $photo(), ['Accept' => 'application/json'])->assertForbidden();
+        $this->as($room, $none)->post(route('photos.store', [$room, $schmidt]), $photo(), ['Accept' => 'application/json'])->assertForbidden();
+
+        $admin = User::factory()->create(['is_admin' => true]);
+        $this->anonymous()->actingAs($admin)->post(route('photos.store', [$room, $schmidt]), $photo(), ['Accept' => 'application/json'])->assertCreated();
+    }
+
+    public function test_school_grades_rank_lower_grades_higher(): void
+    {
+        $room = $this->makeRoom(null, ['rating_style' => 'grades', 'criteria' => ['Gesamt'], 'exclude_own' => '0', 'one_at_a_time' => '0']);
+        [$mueller, $schmidt] = [$room->stations[0], $room->stations[1]];
+        $token = $this->join($room, 'Oma');
+        $this->actingAs($room->owner)->post(route('rooms.open-all', $room))->assertRedirect();
+        auth()->logout();
+
+        $this->as($room, $token)->get(route('play.show', $room))->assertSee('sehr gut');
+        $this->as($room, $token)->post(route('play.vote', [$room, $mueller]), $this->scores($room, [Room::gradeToScore(1)]))->assertRedirect();
+        $this->as($room, $token)->post(route('play.vote', [$room, $schmidt]), $this->scores($room, [Room::gradeToScore(4)]))->assertRedirect();
+        $this->as($room, $token)->post(route('play.vote', [$room, $room->stations[2]]), $this->scores($room, [7]))->assertSessionHasErrors();
+
+        $results = \App\Support\Results::for($room->fresh());
+        $this->assertSame('Müller', $results->first()['station']->name);
+        $this->assertSame('1,00', $room->displayScore($results->first()['average']));
+
+        $this->actingAs($room->owner)->post(route('rooms.reveal', $room), ['action' => 'all']);
+        auth()->logout();
+        $this->as($room, $token)->get(route('play.results', $room))->assertSee('Notenschnitt')->assertSee('4,00');
+
+        $this->actingAs($room->owner)->patch(route('rooms.settings', $room), [
+            'item_label' => 'Familie', 'items_label' => 'Familien', 'rating_style' => 'stars',
+        ])->assertSessionHasErrors('rating_style');
+        $this->assertTrue($room->fresh()->usesGrades());
+    }
 }

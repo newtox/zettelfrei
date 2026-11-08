@@ -51,6 +51,7 @@ Route::prefix('/raeume/{room}')->name('rooms.')->group(function () {
     Route::get('/status', [RoomController::class, 'state'])->name('state');
     Route::patch('/', [RoomController::class, 'update'])->name('update');
     Route::delete('/', [RoomController::class, 'destroy'])->name('destroy');
+    Route::post('/zuruecksetzen', [RoomController::class, 'reset'])->name('reset');
     Route::post('/aufloesung', [RoomController::class, 'reveal'])->name('reveal');
     Route::patch('/einstellungen', [RoomController::class, 'updateSettings'])->name('settings');
     Route::post('/alle-oeffnen', [RoomController::class, 'openAll'])->name('open-all');

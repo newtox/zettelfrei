@@ -9,7 +9,10 @@
         'item_label' => old('item_label', $defaults['item_label']),
         'items_label' => old('items_label', $defaults['items_label']),
         'exclude_own' => (bool) old('exclude_own', $errors->any() ? false : $defaults['exclude_own']),
+        'own_question' => old('own_question', $defaults['own_question']),
+        'own_none_label' => old('own_none_label', $defaults['own_none_label']),
         'photos_enabled' => (bool) old('photos_enabled', $errors->any() ? false : $defaults['photos_enabled']),
+        'photos_own_only' => (bool) old('photos_own_only', $errors->any() ? false : $defaults['photos_own_only']),
         'one_at_a_time' => (bool) old('one_at_a_time', $errors->any() ? false : $defaults['one_at_a_time']),
         'max_choices' => (int) old('max_choices', $defaults['max_choices']),
         'rating_style' => old('rating_style', $defaults['rating_style']),
@@ -31,7 +34,7 @@
                 const t = this.templates[key];
                 this.template = key;
                 this.name = t.name + (t.mode === 'score' ? ' ' + this.year : '');
-                ['theme', 'mode', 'item_label', 'items_label', 'exclude_own', 'photos_enabled', 'one_at_a_time', 'max_choices', 'rating_style'].forEach(k => this[k] = t[k]);
+                ['theme', 'mode', 'item_label', 'items_label', 'exclude_own', 'own_question', 'own_none_label', 'photos_enabled', 'photos_own_only', 'one_at_a_time', 'max_choices', 'rating_style'].forEach(k => this[k] = t[k]);
                 const preset = this.presets.find(p => p.name === t.preset);
                 if (preset) {
                     this.activePreset = preset.name;
@@ -75,7 +78,7 @@
                         <input data-form-type="other" type="radio" name="mode" value="{{ $key }}" x-model="mode" class="peer sr-only">
                         <span class="block h-full rounded-2xl p-3.5 ring-1 ring-line ring-inset peer-checked:ring-2 peer-checked:ring-glow peer-focus-visible:outline-3 peer-focus-visible:outline-glow">
                             <span class="block font-semibold">{{ $label }}</span>
-                            <span class="mt-0.5 block text-sm text-muted">{{ $key === 'score' ? 'Alle geben 1 bis 10 Punkte pro Kriterium' : 'Alle wählen ihre Favoriten aus' }}</span>
+                            <span class="mt-0.5 block text-sm text-muted">{{ $key === 'score' ? 'Alle bewerten jedes Kriterium mit Punkten oder Noten' : 'Alle wählen ihre Favoriten aus' }}</span>
                         </span>
                     </label>
                 @endforeach
@@ -102,18 +105,18 @@
             </div>
             <p class="mt-4 font-semibold" x-text="items_label || 'Einträge'"></p>
             <p class="text-sm text-muted" x-show="mode === 'score' && one_at_a_time">In der Reihenfolge, in der ihr sie besucht.</p>
-            <x-list-editor class="mt-3" x-effect="placeholder = 'z. B. ' + (item_label || 'Eintrag') + ' …'" name="stations" :items="old('stations') ?: ['', '']" placeholder="" add-label="Weitere hinzufügen" />
+            <x-list-editor class="mt-3" x-effect="placeholder = templates[template]?.placeholder ?? 'z. B. ' + (item_label || 'Eintrag') + ' …'" name="stations" :items="old('stations') ?: ['', '']" placeholder="" add-label="Weitere hinzufügen" />
         </section>
 
         <section class="panel p-5" x-show="mode === 'score'">
-            <h2 class="text-xl">Darstellung der Punkte</h2>
-            <p class="mt-1 text-sm text-muted">So vergeben alle ihre 1 bis 10 Punkte auf dem Handy.</p>
+            <h2 class="text-xl">Art der Bewertung</h2>
+            <p class="mt-1 text-sm text-muted">So bewerten alle auf dem Handy.</p>
             <x-rating-style-options class="mt-4" model="rating_style" :selected="$initial['rating_style']" />
         </section>
 
         <section class="panel p-5" x-show="mode === 'score'">
             <h2 class="text-xl">Kriterien</h2>
-            <p class="mt-1 text-sm text-muted">Jedes Kriterium bekommt 1 bis 10 Punkte. Starte mit einer Vorlage und pass sie an.</p>
+            <p class="mt-1 text-sm text-muted">Jedes Kriterium wird einzeln bewertet. Starte mit einer Vorlage und pass sie an.</p>
             <div class="mt-4 flex flex-wrap gap-2">
                 <template x-for="p in presets" :key="p.id">
                     <button type="button" class="btn btn-sm" :class="activePreset === p.name ? 'btn-primary' : 'btn-quiet'" @click="activePreset = p.name; $dispatch('set-criteria', p.criteria)">
@@ -135,7 +138,13 @@
 
         <section class="panel divide-y divide-line px-5 py-2">
             <x-toggle name="exclude_own" model="exclude_own" :checked="$initial['exclude_own']" label="Eigenen Eintrag ausschließen" hint="Beim Beitritt geben alle an, ob sie selbst zu einem Eintrag gehören, und stimmen dafür nicht mit ab." />
-            <x-toggle name="photos_enabled" model="photos_enabled" :checked="$initial['photos_enabled']" label="Fotos erlauben" hint="Alle im Raum können Fotos zu jedem Eintrag hochladen." />
+            <div x-show="exclude_own" x-cloak class="py-3">
+                <x-own-question-fields />
+            </div>
+            <x-toggle name="photos_enabled" model="photos_enabled" :checked="$initial['photos_enabled']" label="Fotos erlauben" hint="Bis zu {{ \App\Models\Room::maxPhotosPerEntry() }} Fotos pro Eintrag." />
+            <div x-show="photos_enabled && exclude_own" x-cloak>
+                <x-toggle name="photos_own_only" model="photos_own_only" :checked="$initial['photos_own_only']" label="Fotos nur für den eigenen Eintrag" hint="Fotos laden nur die hoch, die beim Beitritt angegeben haben, zu diesem Eintrag zu gehören. Wer den Raum verwaltet, kann immer." />
+            </div>
             <div x-show="mode === 'score'">
                 <x-toggle name="one_at_a_time" model="one_at_a_time" :checked="$initial['one_at_a_time']" label="Einer nach dem anderen" hint="Du gibst immer nur einen Eintrag frei, wie bei einem Rundgang. Aus: alle sind gleichzeitig bewertbar." />
             </div>

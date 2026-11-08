@@ -77,6 +77,7 @@ class PlayController extends Controller
             'scores' => $ballot ? $ballot->ratings->pluck('score', 'criterion_id') : collect(),
             'votedStations' => $votedStations,
             'openStations' => $open,
+            'isOwner' => RoomAccess::canManage($request, $room),
             'stateKey' => $this->stateKey($room),
         ]);
     }
@@ -147,12 +148,12 @@ class PlayController extends Controller
 
         $rules = [];
         foreach ($criteria as $id) {
-            $rules['scores.'.$id] = ['required', 'integer', 'between:1,10'];
+            $rules['scores.'.$id] = ['required', 'integer', 'between:1,'.$room->scoreMax()];
         }
 
         $data = $request->validate($rules, [
-            'scores.*.required' => 'Bitte vergib für jedes Kriterium Punkte.',
-            'scores.*.between' => 'Punkte gehen von 1 bis 10.',
+            'scores.*.required' => 'Bitte bewerte jedes Kriterium.',
+            'scores.*.between' => $room->usesGrades() ? 'Noten gehen von 1 bis 6.' : 'Punkte gehen von 1 bis 10.',
         ]);
 
         DB::transaction(function () use ($station, $participant, $criteria, $data) {

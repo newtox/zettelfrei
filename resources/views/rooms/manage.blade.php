@@ -283,9 +283,15 @@
                                 <input data-form-type="other" id="items_label" name="items_label" value="{{ $room->items_label }}" maxlength="30" class="field min-h-10 text-base" required>
                             </div>
                         </div>
-                        <div class="mt-2 divide-y divide-line">
-                            <x-toggle name="exclude_own" :checked="$room->exclude_own" label="Eigenen Eintrag ausschließen" />
-                            <x-toggle name="photos_enabled" :checked="$room->photos_enabled" label="Fotos erlauben" />
+                        <div class="mt-2 divide-y divide-line" x-data="{ exclude_own: @js($room->exclude_own), photos_enabled: @js($room->photos_enabled) }">
+                            <x-toggle name="exclude_own" model="exclude_own" :checked="$room->exclude_own" label="Eigenen Eintrag ausschließen" />
+                            <div x-show="exclude_own" x-cloak class="py-3">
+                                <x-own-question-fields scoped :question="$room->ownQuestion()" :none="$room->ownNoneLabel()" />
+                            </div>
+                            <x-toggle name="photos_enabled" model="photos_enabled" :checked="$room->photos_enabled" label="Fotos erlauben" hint="Bis zu {{ \App\Models\Room::maxPhotosPerEntry() }} pro Eintrag" />
+                            <div x-show="photos_enabled && exclude_own" x-cloak>
+                                <x-toggle name="photos_own_only" :checked="$room->photos_own_only" label="Fotos nur für den eigenen Eintrag" />
+                            </div>
                             @if ($choice)
                                 <div class="flex items-center justify-between gap-4 py-3">
                                     <label for="max_choices" class="font-semibold">Auswahl pro Person</label>
@@ -294,7 +300,7 @@
                             @else
                                 <x-toggle name="one_at_a_time" :checked="$room->one_at_a_time" label="Einer nach dem anderen" />
                                 <div class="py-3">
-                                    <p class="mb-2 font-semibold">Darstellung der Punkte</p>
+                                    <p class="mb-2 font-semibold">Art der Bewertung</p>
                                     <x-rating-style-options :selected="$room->rating_style" compact />
                                 </div>
                             @endif
@@ -331,6 +337,22 @@
                     @if ($room->pruneDate())
                         <p class="mt-4 text-sm text-muted">Ohne weitere Aktivität wird der Raum am {{ $room->pruneDate()->translatedFormat('j. F Y') }} automatisch gelöscht.</p>
                     @endif
+                    <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.reset', $room) }}" class="mt-4 border-t border-line pt-4" data-confirm="Alle Stimmen löschen und den Raum auf Anfang setzen? Einträge, Kriterien und Einstellungen bleiben." data-confirm-action="Zurücksetzen" data-confirm-danger>
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other">
+                        <p class="text-sm font-semibold">Raum zurücksetzen</p>
+                        <p class="mt-0.5 text-sm text-muted">Löscht alle Stimmen, schließt alle Einträge und blendet die Auflösung aus. Wie frisch erstellt.</p>
+                        <label class="mt-2 flex items-center gap-2 text-sm">
+                            <input data-form-type="other" type="checkbox" name="keep_participants" value="1" class="size-4 accent-[var(--glow)]">
+                            Teilnehmende behalten
+                        </label>
+                        @if ($room->photos_enabled || $room->photos()->exists())
+                            <label class="mt-1.5 flex items-center gap-2 text-sm">
+                                <input data-form-type="other" type="checkbox" name="keep_photos" value="1" class="size-4 accent-[var(--glow)]">
+                                Fotos behalten
+                            </label>
+                        @endif
+                        <button class="btn btn-quiet btn-sm mt-3">Zurücksetzen</button>
+                    </form>
                     <form novalidate data-form-type="other" method="POST" action="{{ route('rooms.destroy', $room) }}" class="mt-4 border-t border-line pt-4" data-confirm="{{ 'Raum „'.($room->name).'“ mit allen Bewertungen und Fotos endgültig löschen?' }}" data-confirm-action="Raum löschen" data-confirm-danger>
                         <input type="hidden" name="_token" value="{{ csrf_token() }}" data-form-type="other"> <input type="hidden" name="_method" value="DELETE" data-form-type="other">
                         <button class="text-sm font-semibold text-live">Raum löschen</button>

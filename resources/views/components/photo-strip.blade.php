@@ -1,4 +1,9 @@
 @props(['room', 'station', 'participant' => null, 'isOwner' => false, 'upload' => true])
+@php
+    $max = \App\Models\Room::maxPhotosPerEntry();
+    $remaining = max(0, $max - $station->photos->count());
+    $allowed = $room->canUploadPhoto($participant, $station, $isOwner);
+@endphp
 <div>
     @if ($station->photos->isNotEmpty())
         <ul class="-mx-5 flex snap-x gap-2 overflow-x-auto px-5 pb-1">
@@ -20,14 +25,19 @@
         </ul>
     @endif
 
-    @if ($upload && $room->photos_enabled)
-        <div x-data="photoUpload('{{ route('photos.store', [$room, $station]) }}')" class="{{ $station->photos->isNotEmpty() ? 'mt-3' : '' }}">
+    @if ($upload && $room->photos_enabled && $allowed && $remaining > 0)
+        <div x-data="photoUpload('{{ route('photos.store', [$room, $station]) }}', {{ $remaining }})" class="{{ $station->photos->isNotEmpty() ? 'mt-3' : '' }}">
             <label class="btn btn-quiet w-full cursor-pointer" :class="busy && 'pointer-events-none opacity-60'">
                 <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
                 <span x-text="busy ? 'Lade hoch … ' + done + '/' + total : 'Foto hinzufügen'">Foto hinzufügen</span>
-                <input data-form-type="other" type="file" accept="image/*" multiple class="sr-only" @change="upload($event)">
+                <input data-form-type="other" type="file" accept="image/*" @if ($remaining > 1) multiple @endif class="sr-only" @change="upload($event)">
             </label>
+            <p class="mt-1.5 text-xs text-muted">{{ $remaining === $max ? 'Bis zu '.$max.' Fotos' : 'Noch '.$remaining.' von '.$max.' Fotos möglich' }}</p>
             <p x-show="error" x-text="error" x-cloak class="mt-2 text-sm text-live"></p>
         </div>
+    @elseif ($upload && $room->photos_enabled && $remaining === 0)
+        <p class="{{ $station->photos->isNotEmpty() ? 'mt-2' : '' }} text-xs text-muted">{{ $max }} von {{ $max }} Fotos, mehr geht nicht.</p>
+    @elseif ($upload && $room->photos_enabled && $participant)
+        <p class="{{ $station->photos->isNotEmpty() ? 'mt-2' : '' }} text-xs text-muted">Fotos laden hier nur die hoch, die zu diesem Eintrag gehören.</p>
     @endif
 </div>

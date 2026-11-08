@@ -18,14 +18,14 @@
             </div>
             @if ($room->exclude_own)
             <div>
-                <label for="station_id" class="mb-1.5 block font-semibold">Gehörst du selbst zu einem Eintrag?</label>
+                <label for="station_id" class="mb-1.5 block font-semibold">{{ $room->ownQuestion() }}</label>
                 <select data-form-type="other" id="station_id" name="station_id" @error('station_id') aria-invalid="true" @enderror class="field">
-                    <option value="">Nein</option>
+                    <option value="">{{ $room->ownNoneLabel() }}</option>
                     @foreach ($room->stations as $station)
                         <option value="{{ $station->id }}" @selected(old('station_id') == $station->id)>{{ $station->name }}</option>
                     @endforeach
                 </select>
-                <p class="mt-1.5 text-sm text-muted">Dafür stimmst du dann nicht mit ab.</p>
+                <p class="mt-1.5 text-sm text-muted">Dafür stimmst du dann nicht mit ab.@if ($room->photos_enabled && $room->photos_own_only) Fotos kannst du nur dort hochladen.@endif</p>
             </div>
             @endif
             <button class="btn btn-primary w-full">Mitmachen</button>

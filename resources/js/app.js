@@ -98,14 +98,15 @@ async function shrink(file, max = 2000, quality = 0.85) {
     }
 }
 
-Alpine.data('photoUpload', (url) => ({
+Alpine.data('photoUpload', (url, remaining = 3) => ({
     busy: false,
     done: 0,
     total: 0,
     error: '',
     async upload(event) {
-        const files = [...event.target.files];
-        if (!files.length) return;
+        const picked = [...event.target.files];
+        if (!picked.length) return;
+        const files = picked.slice(0, remaining);
         this.busy = true;
         this.error = '';
         this.done = 0;
@@ -132,6 +133,11 @@ Alpine.data('photoUpload', (url) => ({
         }
         event.target.value = '';
         this.busy = false;
+        if (this.done && !this.error && picked.length > files.length) {
+            this.error = 'Nur ' + remaining + ' Foto' + (remaining === 1 ? '' : 's') + ' übernommen, mehr passen nicht.';
+            setTimeout(() => window.location.reload(), 1800);
+            return;
+        }
         if (this.done) window.location.reload();
     },
 }));

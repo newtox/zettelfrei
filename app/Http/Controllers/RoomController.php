@@ -114,6 +114,10 @@ class RoomController extends Controller
 
         $data = $request->validate($this->settingsRules(), $this->messages());
 
+        if (isset($data['rating_style']) && ($data['rating_style'] === 'grades') !== $room->usesGrades() && $room->hasBallots()) {
+            return back()->withErrors(['rating_style' => 'Zwischen Schulnoten und Punkten lässt sich nur wechseln, solange noch niemand abgestimmt hat. Setz den Raum vorher zurück.']);
+        }
+
         $room->update($this->settingsFrom($request, $data));
 
         if ($room->isScore() && $room->one_at_a_time && $room->stations()->where('status', Station::OPEN)->count() > 1) {
@@ -122,6 +126,15 @@ class RoomController extends Controller
         }
 
         return back()->with('status', 'Einstellungen gespeichert.');
+    }
+
+    public function reset(Request $request, Room $room): RedirectResponse
+    {
+        $this->authorizeOwner($request, $room);
+
+        $room->resetVotes($request->boolean('keep_participants'), $request->boolean('keep_photos'));
+
+        return redirect()->route('rooms.manage', $room)->with('status', 'Raum zurückgesetzt. Alle Stimmen sind gelöscht.');
     }
 
     public function destroy(Request $request, Room $room): RedirectResponse
@@ -358,7 +371,10 @@ class RoomController extends Controller
             'item_label' => ['required', 'string', 'max:30'],
             'items_label' => ['required', 'string', 'max:30'],
             'exclude_own' => ['nullable', 'boolean'],
+            'own_question' => ['nullable', 'string', 'max:120'],
+            'own_none_label' => ['nullable', 'string', 'max:40'],
             'photos_enabled' => ['nullable', 'boolean'],
+            'photos_own_only' => ['nullable', 'boolean'],
             'one_at_a_time' => ['nullable', 'boolean'],
             'max_choices' => ['nullable', 'integer', 'between:1,10'],
             'rating_style' => ['nullable', Rule::in(array_keys(Room::RATING_STYLES))],
@@ -371,7 +387,10 @@ class RoomController extends Controller
             'item_label' => trim($data['item_label']),
             'items_label' => trim($data['items_label']),
             'exclude_own' => $request->boolean('exclude_own'),
+            'own_question' => trim((string) ($data['own_question'] ?? '')) ?: null,
+            'own_none_label' => trim((string) ($data['own_none_label'] ?? '')) ?: null,
             'photos_enabled' => $request->boolean('photos_enabled'),
+            'photos_own_only' => $request->boolean('photos_own_only'),
             'one_at_a_time' => $request->boolean('one_at_a_time'),
             'max_choices' => (int) ($data['max_choices'] ?? 1),
         ] + (isset($data['rating_style']) ? ['rating_style' => $data['rating_style']] : []);

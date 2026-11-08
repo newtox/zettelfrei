@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 #[Hidden(['admin_token'])]
-#[Fillable(['name', 'theme', 'join_locked', 'keep', 'mode', 'rating_style', 'item_label', 'items_label', 'exclude_own', 'photos_enabled', 'one_at_a_time', 'voting_open', 'max_choices'])]
+#[Fillable(['name', 'theme', 'join_locked', 'keep', 'mode', 'rating_style', 'item_label', 'items_label', 'exclude_own', 'own_question', 'own_none_label', 'photos_enabled', 'photos_own_only', 'one_at_a_time', 'voting_open', 'max_choices'])]
 class Room extends Model
 {
     use Prunable;
@@ -33,20 +33,33 @@ class Room extends Model
         'numbers' => ['label' => 'Zahlen', 'hint' => 'Schlichte Knöpfe von 1 bis 10'],
         'slider' => ['label' => 'Schieberegler', 'hint' => 'Ein Regler mit großer Zahlenanzeige'],
         'stars' => ['label' => 'Sterne', 'hint' => '5 Sterne mit halben Schritten'],
+        'grades' => ['label' => 'Schulnoten', 'hint' => 'Noten von 1 bis 6, die 1 ist die beste'],
+    ];
+
+    public const OWN_QUESTIONS = [
+        'generic' => ['question' => 'Gehörst du selbst zu einem Eintrag?', 'none' => 'Nein'],
+        'tree' => ['question' => 'Welcher Baum ist deiner?', 'none' => 'Keiner davon'],
+        'family' => ['question' => 'Zu welcher Familie gehörst du?', 'none' => 'Zu keiner davon'],
+        'entry' => ['question' => 'Welcher Beitrag ist von dir?', 'none' => 'Keiner davon'],
+        'team' => ['question' => 'In welchem Team bist du?', 'none' => 'In keinem'],
     ];
 
     public const TEMPLATES = [
         'trees' => [
             'label' => 'Weihnachtsbäume',
-            'hint' => 'Rundgang von Familie zu Familie, Punkte pro Kriterium',
-            'items_hint' => 'Die Familien, deren Baum ihr bewertet.',
+            'hint' => 'Rundgang von Baum zu Baum, Punkte pro Kriterium',
+            'items_hint' => 'Die Bäume, die ihr bewertet. Benennt sie z. B. nach denen, die dort wohnen.',
+            'placeholder' => 'z. B. Erika & Jörg',
             'name' => 'Baumbewertung',
             'mode' => self::SCORE,
-            'item_label' => 'Familie',
-            'items_label' => 'Familien',
+            'item_label' => 'Baum',
+            'items_label' => 'Bäume',
             'rating_style' => 'lights',
             'exclude_own' => true,
+            'own_question' => self::OWN_QUESTIONS['tree']['question'],
+            'own_none_label' => self::OWN_QUESTIONS['tree']['none'],
             'photos_enabled' => true,
+            'photos_own_only' => false,
             'one_at_a_time' => true,
             'max_choices' => 1,
             'theme' => 'christmas',
@@ -56,13 +69,17 @@ class Room extends Model
             'label' => 'Wettbewerb',
             'hint' => 'Alle Beiträge gleichzeitig bewerten, z. B. Plätzchen oder Kostüme',
             'items_hint' => 'Die Beiträge, die bewertet werden, z. B. jede Plätzchensorte oder jedes Kostüm.',
+            'placeholder' => 'z. B. Zimtsterne',
             'name' => 'Wettbewerb',
             'mode' => self::SCORE,
             'item_label' => 'Beitrag',
             'items_label' => 'Beiträge',
             'rating_style' => 'stars',
             'exclude_own' => true,
+            'own_question' => self::OWN_QUESTIONS['entry']['question'],
+            'own_none_label' => self::OWN_QUESTIONS['entry']['none'],
             'photos_enabled' => true,
+            'photos_own_only' => false,
             'one_at_a_time' => false,
             'max_choices' => 1,
             'theme' => 'dark',
@@ -72,13 +89,17 @@ class Room extends Model
             'label' => 'Umfrage',
             'hint' => 'Alle wählen eine Option, z. B. wohin es zum Essen geht',
             'items_hint' => 'Die Antworten, aus denen alle auswählen.',
+            'placeholder' => 'z. B. Pizzeria am Markt',
             'name' => 'Wohin gehen wir?',
             'mode' => self::CHOICE,
             'item_label' => 'Option',
             'items_label' => 'Optionen',
             'rating_style' => 'lights',
             'exclude_own' => false,
+            'own_question' => self::OWN_QUESTIONS['generic']['question'],
+            'own_none_label' => self::OWN_QUESTIONS['generic']['none'],
             'photos_enabled' => false,
+            'photos_own_only' => false,
             'one_at_a_time' => false,
             'max_choices' => 1,
             'theme' => 'light',
@@ -102,6 +123,7 @@ class Room extends Model
             'reveal_step' => 'integer',
             'exclude_own' => 'boolean',
             'photos_enabled' => 'boolean',
+            'photos_own_only' => 'boolean',
             'one_at_a_time' => 'boolean',
             'voting_open' => 'boolean',
             'max_choices' => 'integer',
@@ -167,6 +189,86 @@ class Room extends Model
         if (! $this->last_activity_at || $this->last_activity_at->lt(now()->subMinute())) {
             $this->forceFill(['last_activity_at' => now()])->saveQuietly();
         }
+    }
+
+    public function usesGrades(): bool
+    {
+        return $this->rating_style === 'grades';
+    }
+
+    public function scoreMax(): int
+    {
+        return $this->usesGrades() ? 6 : 10;
+    }
+
+    public static function gradeToScore(int $grade): int
+    {
+        return 7 - $grade;
+    }
+
+    public function displayScore(?float $score): string
+    {
+        if ($score === null) {
+            return '–';
+        }
+
+        return $this->usesGrades()
+            ? number_format(7 - $score, 2, ',', '.')
+            : number_format($score, 1, ',', '.');
+    }
+
+    public function ownQuestion(): string
+    {
+        return filled($this->own_question) ? $this->own_question : self::OWN_QUESTIONS['generic']['question'];
+    }
+
+    public function ownNoneLabel(): string
+    {
+        return filled($this->own_none_label) ? $this->own_none_label : self::OWN_QUESTIONS['generic']['none'];
+    }
+
+    public static function maxPhotosPerEntry(): int
+    {
+        return max(1, (int) config('zettelfrei.max_photos_per_entry'));
+    }
+
+    public function canUploadPhoto(?Participant $participant, Station $station, bool $canManage): bool
+    {
+        if (! $this->photos_enabled) {
+            return false;
+        }
+
+        if ($canManage) {
+            return true;
+        }
+
+        if (! $participant) {
+            return false;
+        }
+
+        return ! ($this->photos_own_only && $this->exclude_own) || $participant->station_id === $station->id;
+    }
+
+    public function resetVotes(bool $keepParticipants, bool $keepPhotos): void
+    {
+        $stationIds = $this->stations()->pluck('id');
+
+        Ballot::whereIn('station_id', $stationIds)->delete();
+        $this->choices()->delete();
+
+        if (! $keepPhotos) {
+            $this->deletePhotoFiles();
+            Photo::whereIn('station_id', $stationIds)->delete();
+        }
+
+        if (! $keepParticipants) {
+            $this->participants()->delete();
+        }
+
+        Station::whereIn('id', $stationIds)->update(['status' => Station::PENDING]);
+
+        $this->forceFill(['voting_open' => false, 'reveal_step' => 0])->save();
+        $this->touchActivity();
     }
 
     public function adminUrl(): string

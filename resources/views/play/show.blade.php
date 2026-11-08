@@ -62,7 +62,7 @@
                 <section class="mt-8">
                     <h2 class="text-xl">Fotos</h2>
                     <div class="mt-3">
-                        <x-photo-strip :room="$room" :station="$station" :participant="$participant" />
+                        <x-photo-strip :room="$room" :station="$station" :participant="$participant" :is-owner="$isOwner" />
                     </div>
                 </section>
             @endif

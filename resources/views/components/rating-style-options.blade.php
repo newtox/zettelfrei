@@ -1,5 +1,5 @@
 @props(['selected' => 'lights', 'model' => null, 'compact' => false])
-<div {{ $attributes->class(['grid gap-2', 'grid-cols-2' => $compact, 'grid-cols-2 sm:grid-cols-4' => ! $compact]) }}>
+<div {{ $attributes->class(['grid gap-2', 'grid-cols-2' => $compact, 'grid-cols-2 sm:grid-cols-5' => ! $compact]) }}>
     @foreach (\App\Models\Room::RATING_STYLES as $key => $style)
         <label class="cursor-pointer">
             <input type="radio" name="rating_style" value="{{ $key }}" class="peer sr-only" @checked($selected === $key) @if ($model) x-model="{{ $model }}" @endif data-form-type="other">
@@ -23,6 +23,11 @@
                             @for ($i = 1; $i <= 4; $i++)
                                 <svg viewBox="0 0 24 24" class="size-5 {{ $i <= 3 ? 'text-glow' : 'text-bulb-off' }}" fill="currentColor"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
                             @endfor
+                            @break
+                        @case('grades')
+                            @foreach ([1, 2, 3] as $n)
+                                <span class="grid size-6 place-items-center rounded-full text-xs font-bold {{ $n === 2 ? 'bg-glow text-glow-ink' : 'bg-bulb-off text-muted' }}">{{ $n }}</span>
+                            @endforeach
                             @break
                     @endswitch
                 </span>

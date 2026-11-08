@@ -1,5 +1,5 @@
 @php
-    $fmt = fn ($v) => $v === null ? '–' : number_format($v, 1, ',', '.');
+    $fmt = fn ($v) => $room->displayScore($v === null ? null : (float) $v);
     $count = $results->count();
     $choice = $room->isChoice();
     $revealed = min($room->reveal_step, $count);
@@ -37,7 +37,7 @@
                                     <p class="text-xs text-muted">{{ $row['votes'] === 1 ? 'Stimme' : 'Stimmen' }}</p>
                                 @else
                                     <p class="font-display text-3xl tabular-nums {{ $row['rank'] === 1 ? 'text-glow' : '' }}">{{ $fmt($row['average']) }}</p>
-                                    <p class="text-xs text-muted">von 10</p>
+                                    <p class="text-xs text-muted">{{ $room->usesGrades() ? 'Notenschnitt' : 'von 10' }}</p>
                                 @endif
                             </div>
                         </div>
